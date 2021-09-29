@@ -7,7 +7,7 @@
  async function list(req, res) {
   const date = req.query.date;
   const data = date ? await service.readDate(date) : await service.list();
-  
+  //Sort them now
   res.json({data});
 }
 

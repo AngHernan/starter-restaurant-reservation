@@ -13,7 +13,7 @@ function read(reservation_id){
 }
 
 function readDate(date){
-    return knex("reservations").distinct("reservations.*").where({"reservation_date": date})
+    return knex("reservations").orderBy('reservation_time').distinct("reservations.*").where({"reservation_date": date})
 }
 
 module.exports = {
