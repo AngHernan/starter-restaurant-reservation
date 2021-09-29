@@ -11,7 +11,7 @@ router.route("/")
     .get(controller.list)
     .post(controller.create)
 
-router.route("/:date")
+router.route("/:reservation_id")
     .get(controller.read)
-    
+
 module.exports = router;

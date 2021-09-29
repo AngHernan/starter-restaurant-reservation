@@ -5,16 +5,28 @@
  const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  
  async function list(req, res) {
-  const data = await service.list();
+  const date = req.query.date;
+  const data = date ? await service.readDate(date) : await service.list();
   
   res.json({data});
 }
 
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const reservation = await service.read(reservation_id);
+
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `reservation_id not found: ${reservation_id}` });
+}
 
 async function read(req, res){
-  const reservationsList = await service.read(req.params.date)
-  const reservationData = reservationsList[1]
-  res.json({reservationData})
+  const reservation = await service.read(res.locals.reservation_id)
+  
+  res.json({reservation})
 }
 
 async function create(req, res){
@@ -91,7 +103,7 @@ function peopleNan(req, res, next){
   next({status: 400, message: "people is not a number"});
 }
 
-{function validDate(req, res, next){
+function validDate(req, res, next){
   const date = res.locals.reservation_date;
   let valid = new Date(date)
   if(valid.toString() != 'Invalid Date'){
@@ -99,8 +111,6 @@ function peopleNan(req, res, next){
   }
   next({status:400, message: "reservation_date is not valid"})
   }
-}
-
 
 module.exports = {
   
@@ -120,6 +130,7 @@ module.exports = {
       ],
     
       read: [
+        asyncErrorBoundary(reservationExists),
         asyncErrorBoundary(read)
-      ]
+      ],
 };
