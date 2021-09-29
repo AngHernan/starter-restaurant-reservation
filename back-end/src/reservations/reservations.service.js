@@ -5,8 +5,8 @@ function list(){
 }
 
 function create(reservation){
-    return knex("reservations").insert(reservation)
-}    
+    return knex("reservations").insert(reservation,"*").then((updatedRecords) => updatedRecords[0]);
+}
 
 function read(date){
     return knex("reservations").select("*").where({"reservation_date": date})

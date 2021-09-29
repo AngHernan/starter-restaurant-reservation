@@ -18,17 +18,8 @@ async function read(req, res){
 }
 
 async function create(req, res){
-  const newReservation = ({
-    first_name, 
-    last_name,
-    mobile_number,
-    reservation_date,
-    reservation_time,
-    people } = res.locals);
-
-  const createdReservation = await service.create(newReservation);
-
-  res.status(201).json({ data: createdReservation });
+  const data = await service.create(req.body.data);
+  res.status(201).json({ data });
 }
 
 function hasFirstName(req, res, next){
@@ -69,11 +60,18 @@ function hasReservationDate(req, res, next){
 
 function hasReservationTime(req, res, next){
   const {data: {reservation_time} = {}} = req.body;
-  if(reservation_time){
+  if(!reservation_time){
+    next({status: 400, message: "reservation_time is missing"})
+  }
+  var military = /^\s*([01]?\d|2[0-3]):[0-5]\d\s*$/i;
+  var standard = /^\s*(0?\d|1[0-2]):[0-5]\d(\s+(AM|PM))?\s*$/i;
+ 
+  if(reservation_time.match(military) || reservation_time.match(standard)){
     res.locals.reservation_time = reservation_time;
+
     return next();
   }
-  next({status: 400, message: "reservation_time is missing"})
+  next({status: 400, message: "reservation_time isn't valid"})
 }
 
 function hasPeople(req, res, next){
@@ -96,13 +94,13 @@ function peopleNan(req, res, next){
 {function validDate(req, res, next){
   const date = res.locals.reservation_date;
   let valid = new Date(date)
-  if(valid){
+  if(valid.toString() != 'Invalid Date'){
     return next();
   }
   next({status:400, message: "reservation_date is not valid"})
+  }
 }
-//let date = new Date('hello')
-}
+
 
 module.exports = {
   
