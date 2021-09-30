@@ -24,9 +24,9 @@ async function reservationExists(req, res, next) {
 }
 
 async function read(req, res){
-  const reservation = await service.read(res.locals.reservation_id);
+  const data = await service.read(res.locals.reservation.reservation_id);
   
-  res.json({reservation})
+  res.json({data})
 }
 
 async function create(req, res){
@@ -138,7 +138,7 @@ async function resTaken(req, res, next){
   const resDate = res.locals.reservation_date;
 
   const taken = await service.resTaken(resDate, resTime);
-  if(!taken){
+  if(taken){
     return next();
   }
   next({status:400, message: "time taken"});

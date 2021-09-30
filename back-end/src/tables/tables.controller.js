@@ -75,6 +75,13 @@ function hasCap(req, res, next){
   next({status:400, message: "not enough capacity"})
 }
 
+function isOccupied(req, res, next){
+  const status = res.locals.table.status;
+  if(status === 'Free'){
+    return next();
+  }
+  next({status:400, message: "table is occupied"})
+}
 
 module.exports = {
     list: [
@@ -92,6 +99,6 @@ module.exports = {
       asyncErrorBoundary(tableExists),
       hasReservId,
       hasCap,
-      asyncErrorBoundary(reservationExists),
+      isOccupied,
     ],
 };
