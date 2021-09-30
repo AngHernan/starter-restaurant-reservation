@@ -24,7 +24,7 @@ async function reservationExists(req, res, next) {
 }
 
 async function read(req, res){
-  const reservation = await service.read(res.locals.reservation_id)
+  const reservation = await service.read(res.locals.reservation_id);
   
   res.json({reservation})
 }
@@ -49,7 +49,7 @@ function hasLastName(req, res, next){
     res.locals.last_name = last_name;
     return next();
   }
-  next({status: 400, message: "last_name is missing"})
+  next({status: 400, message: "last_name is missing"});
 }
 
 function hasMobileNumber(req, res, next){
@@ -58,7 +58,7 @@ function hasMobileNumber(req, res, next){
     res.locals.mobile_number = mobile_number;
     return next();
   }
-  next({status: 400, message: "mobile_number is missing"})
+  next({status: 400, message: "mobile_number is missing"});
 }
 
 function hasReservationDate(req, res, next){
@@ -67,13 +67,13 @@ function hasReservationDate(req, res, next){
     res.locals.reservation_date = reservation_date;
     return next();
   }
-  next({status: 400, message:"reservation_date is missing"})
+  next({status: 400, message:"reservation_date is missing"});
 }
 
 function hasReservationTime(req, res, next){
   const {data: {reservation_time} = {}} = req.body;
   if(!reservation_time){
-    next({status: 400, message: "reservation_time is missing"})
+    next({status: 400, message: "reservation_time is missing"});
   }
   var military = /^\s*([01]?\d|2[0-3]):[0-5]\d\s*$/i;
   var standard = /^\s*(0?\d|1[0-2]):[0-5]\d(\s+(AM|PM))?\s*$/i;
@@ -83,7 +83,7 @@ function hasReservationTime(req, res, next){
 
     return next();
   }
-  next({status: 400, message: "reservation_time isn't valid"})
+  next({status: 400, message: "reservation_time isn't valid"});
 }
 
 function hasPeople(req, res, next){
@@ -92,7 +92,7 @@ function hasPeople(req, res, next){
     res.locals.people = people;
     return next();
   }
-  next({status: 400, message: "people quantity not valid"})
+  next({status: 400, message: "people quantity not valid"});
 }
 
 function peopleNan(req, res, next){
@@ -109,8 +109,29 @@ function validDate(req, res, next){
   if(valid.toString() != 'Invalid Date'){
     return next();
   }
-  next({status:400, message: "reservation_date is not valid"})
+  next({status:400, message: "reservation_date is not valid"});
   }
+
+function notPast(req, res, next){ 
+  const date = res.locals.reservation_date;
+  const current = new Date()
+  let valid = new Date(date)
+  if(valid > current){
+    return next();
+  }
+  next({status:400, message: "resrvation must be in the future"});
+  }
+
+
+  function notTues(req, res, next){ 
+    let date = res.locals.reservation_date;
+    let valid = new Date(date)
+    if(valid.getDay() === 2){
+      
+      return next();
+    }
+    next({status:400, message: "closed on Tuesdays"});
+    }
 
 module.exports = {
   
@@ -126,6 +147,8 @@ module.exports = {
         hasPeople,
         peopleNan,
         validDate,
+        notPast,
+        notTues,
         asyncErrorBoundary(create)
       ],
     
