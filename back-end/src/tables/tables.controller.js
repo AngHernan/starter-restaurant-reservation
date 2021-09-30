@@ -69,7 +69,7 @@ const reservation = await reservationService.read(req.params.reservation_id)
 
 function hasCap(req, res, next){
   const { data: {capacity} = {}} = req.body;
-  if(capacity <= res.locals.reservation.capacity){
+  if(capacity <= res.locals.capacity){
     return next();
   }
   next({status:400, message: "not enough capacity"})
@@ -91,8 +91,7 @@ module.exports = {
     seat: [
       asyncErrorBoundary(tableExists),
       hasReservId,
-      asyncErrorBoundary(reservationExists),
       hasCap,
-      
+      asyncErrorBoundary(reservationExists),
     ],
 };
