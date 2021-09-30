@@ -1,4 +1,4 @@
-const date = '2030-01-02'
+const date = '"09:30"'
 let valid = new Date(date)
 
 const current = new Date()

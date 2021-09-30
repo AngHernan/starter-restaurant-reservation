@@ -123,15 +123,26 @@ function notPast(req, res, next){
   }
 
 
-  function notTues(req, res, next){ 
-    let date = res.locals.reservation_date;
-    let valid = new Date(date)
-    if(valid.getDay() === 2){
-      
-      return next();
-    }
-    next({status:400, message: "closed on Tuesdays"});
-    }
+function notTues(req, res, next){ 
+  let date = res.locals.reservation_date;
+  let valid = new Date(date)
+  if(valid.getDay() === 2){
+    
+    return next();
+  }
+  next({status:400, message: "closed on Tuesdays"});
+  }
+
+async function resTaken(req, res, next){
+  const resTime = res.locals.reservation_time;
+  const resDate = res.locals.reservation_date;
+
+  const taken = await service.resTaken(resDate, resTime);
+  if(!taken){
+    return next();
+  }
+  next({status:400, message: "time taken"});
+}
 
 module.exports = {
   
@@ -149,6 +160,7 @@ module.exports = {
         validDate,
         notPast,
         notTues,
+        resTaken,
         asyncErrorBoundary(create)
       ],
     

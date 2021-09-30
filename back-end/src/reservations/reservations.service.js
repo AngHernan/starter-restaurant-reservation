@@ -16,9 +16,13 @@ function readDate(date){
     return knex("reservations").orderBy('reservation_time').distinct("reservations.*").where({"reservation_date": date})
 }
 
+function resTaken(date, time){
+    return knex("reservations").orderBy('reservation_time').distinct("reservations.*").where({"reservation_date": date, "reservation_time": time})
+}
 module.exports = {
     list,
     create,
     read,
     readDate,
+    resTaken,
 }
