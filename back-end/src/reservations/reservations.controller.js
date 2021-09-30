@@ -147,7 +147,8 @@ async function resTaken(req, res, next){
 module.exports = {
   
     list: [
-      asyncErrorBoundary(list)],
+      asyncErrorBoundary(list)
+    ],
     
     create: [
         hasFirstName, 
@@ -168,4 +169,6 @@ module.exports = {
         asyncErrorBoundary(reservationExists),
         asyncErrorBoundary(read)
       ],
+
+      reservationExists: [asyncErrorBoundary(reservationExists)],
 };

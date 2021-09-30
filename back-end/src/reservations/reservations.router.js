@@ -7,6 +7,10 @@
 const router = require("express").Router();
 const controller = require("./reservations.controller");
 
+//const tablesRouter = require("../tables/tables.router");
+
+//router.use("/:reservation_id/:table_id", controller.reservationExists, tablesRouter)
+
 router.route("/")
     .get(controller.list)
     .post(controller.create)
