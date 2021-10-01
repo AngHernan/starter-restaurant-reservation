@@ -46,38 +46,34 @@ async function tableExists(req, res, next){
     res.locals.table = table;
     return next();
   }
-  next({status: 400, message:"table_id does not exist"})
+  next({ status: 404, message: `Table cannot be found.` })
 }
 
-function hasReservId(req, res, next){
+async function hasReservId(req, res, next){
   const {data: {reservation_id} = {}} = req.body;
-  if(reservation_id){
-    res.locals.table.reservation_id = reservation_id;
+  if(!reservation_id){ next({status: 400, message: "missing reservation_id"});
     return next();
   }
-  next({status: 400, message: "missing reservation_id"});
-}
-
-async function reservationExists(req, res, next){
-const reservation = await reservationService.read(req.params.reservation_id)
-  if(reservation){
-    res.locals.reservation = reservation;
-    return next();
-  }
-  next({status:404, message: "Reservation does not exist"});
 }
 
 function hasCap(req, res, next){
   const { data: {capacity} = {}} = req.body;
-  if(capacity <= res.locals.capacity){
+  const {
+    table: { table_id: tableId, ...table },
+  } = res.locals;
+
+  if(capacity <= table.capacity){
     return next();
   }
   next({status:400, message: "not enough capacity"})
 }
 
 function isOccupied(req, res, next){
-  const status = res.locals.table.status;
-  if(status === 'Free'){
+   const {
+    table: { table_id: tableId, ...table },
+  } = res.locals;
+  
+  if(table.status === 'Free'){
     return next();
   }
   next({status:400, message: "table is occupied"})
@@ -96,9 +92,9 @@ module.exports = {
     ],
 
     seat: [
-      asyncErrorBoundary(tableExists),
-      hasReservId,
-      hasCap,
-      isOccupied,
+      tableExists,
+      //hasReservId,
+      //hasCap,
+      //isOccupied,
     ],
 };

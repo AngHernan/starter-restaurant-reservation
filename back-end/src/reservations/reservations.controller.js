@@ -133,6 +133,18 @@ function notTues(req, res, next){
   next({status:400, message: "closed on Tuesdays"});
   }
 
+function validTime(req, res, next){
+  const resTime = res.locals.reservation_time;
+
+  if(resTime < "10:30"){
+    return next({status: 400, message: "Pick a later time"});
+  }
+  else if(resTime > "21:30"){
+    return next({status: 400, message: "Pick an earlier time"});
+  }
+  next()
+}
+
 async function resTaken(req, res, next){
   const resTime = res.locals.reservation_time;
   const resDate = res.locals.reservation_date;
@@ -144,12 +156,37 @@ async function resTaken(req, res, next){
   next({status:400, message: "time taken"});
 }
 
+async function findRes(req, res, next){
+  const { reservation_id } = req.params;
+
+  const data = await service.read(reservation_id);
+
+  res.json({data})
+}
+
+async function hasRes(req, res, next){
+  const {data: {reservation_id} = {}} = req.body;
+  if(!reservation_id){ next({status: 400, message: "missing reservation_id"});
+    return next();
+  }
+}
+
+async function reservationValid(req, res, next){
+  const {data: {reservation_id} = {}} = req.body;
+  const foundReservation = await service.read(reservation_id)
+    if(foundReservation){
+      res.locals.reservation = foundReservation;
+      return next();
+    }
+    next({status:404, message: "Reservation does not exist"});
+  }
+
 module.exports = {
   
     list: [
       asyncErrorBoundary(list)
     ],
-    
+    findRes,
     create: [
         hasFirstName, 
         hasLastName, 
@@ -161,6 +198,7 @@ module.exports = {
         validDate,
         notPast,
         notTues,
+        validTime,
         resTaken,
         asyncErrorBoundary(create)
       ],
@@ -169,6 +207,5 @@ module.exports = {
         asyncErrorBoundary(reservationExists),
         asyncErrorBoundary(read)
       ],
-
-      reservationExists: [asyncErrorBoundary(reservationExists)],
+      reservationValidation: [hasRes, reservationValid],
 };

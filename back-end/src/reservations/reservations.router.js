@@ -18,4 +18,7 @@ router.route("/")
 router.route("/:reservation_id")
     .get(controller.read)
 
+router.route("/:reservation_id/seat")
+    .get(controller.findRes)
+
 module.exports = router;
