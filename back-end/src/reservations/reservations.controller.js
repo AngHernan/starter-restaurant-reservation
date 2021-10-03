@@ -1,26 +1,21 @@
 /**
  * List handler for reservation resources
  */
+
+
  const service = require("./reservations.service");
  const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  
- async function list(req, res) {
+{/*
+  //########################################C.R.U.D.########################################//
+                                        Functions bellow
+*/}
+
+async function list(req, res) {
   const date = req.query.date;
   const data = date ? await service.readDate(date) : await service.list();
   //Sort them now
   res.json({data});
-}
-
-async function reservationExists(req, res, next) {
-  const { reservation_id } = req.params;
-
-  const reservation = await service.read(reservation_id);
-
-  if (reservation) {
-    res.locals.reservation = reservation;
-    return next();
-  }
-  next({ status: 404, message: `reservation_id not found: ${reservation_id}` });
 }
 
 async function read(req, res){
@@ -32,6 +27,23 @@ async function read(req, res){
 async function create(req, res){
   const data = await service.create(req.body.data);
   res.status(201).json({ data });
+}
+
+{/*
+  //########################################Validation########################################//
+                                        functions bellow
+*/}
+
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const reservation = await service.read(reservation_id);
+
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `reservation_id not found: ${reservation_id}` });
 }
 
 function hasFirstName(req, res, next){
@@ -156,37 +168,11 @@ async function resTaken(req, res, next){
   next({status:400, message: "time taken"});
 }
 
-async function findRes(req, res, next){
-  const { reservation_id } = req.params;
-
-  const data = await service.read(reservation_id);
-
-  res.json({data})
-}
-
-async function hasRes(req, res, next){
-  const {data: {reservation_id} = {}} = req.body;
-  if(!reservation_id){ next({status: 400, message: "missing reservation_id"});
-    return next();
-  }
-}
-
-async function reservationValid(req, res, next){
-  const {data: {reservation_id} = {}} = req.body;
-  const foundReservation = await service.read(reservation_id)
-    if(foundReservation){
-      res.locals.reservation = foundReservation;
-      return next();
-    }
-    next({status:404, message: "Reservation does not exist"});
-  }
-
 module.exports = {
   
     list: [
       asyncErrorBoundary(list)
     ],
-    findRes,
     create: [
         hasFirstName, 
         hasLastName, 
@@ -207,5 +193,4 @@ module.exports = {
         asyncErrorBoundary(reservationExists),
         asyncErrorBoundary(read)
       ],
-      reservationValidation: [hasRes, reservationValid],
 };

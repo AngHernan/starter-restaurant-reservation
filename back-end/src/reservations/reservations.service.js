@@ -17,12 +17,22 @@ function readDate(date){
 }
 
 function resTaken(date, time){
-    return knex("reservations").orderBy('reservation_time').distinct("reservations.*").where({"reservation_date": date, "reservation_time": time}).first();
+    return knex("reservations").orderBy('reservation_time').distinct("reservations.*").where({"reservation_date": date, "reservation_time": time});
 }
-module.exports = {
+
+
+function updateStatus (reservation_id, status){
+    return knex("reservations")
+      .where({ reservation_id: reservation_id })
+      .update({ status: status })
+      .returning("status");
+  };
+
+    module.exports = {
     list,
     create,
     read,
     readDate,
     resTaken,
+    updateStatus,
 }

@@ -10,7 +10,7 @@ exports.up = function(knex) {
           .onDelete("CASCADE")
       table.string("table_name")
       table.integer("capacity")
-      table.string("status").notNullable().defaultTo("Free")
+      table.boolean("occupied").defaultTo(false).notNullable()
       table.timestamps(true, true);
   })
 };

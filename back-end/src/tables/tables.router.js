@@ -7,6 +7,6 @@ router.route("/")
     .post(controller.create)
 
 router.route("/:table_id/seat")
-    .put(reservationController.reservationValidation, controller.seat)
+    .put(controller.seat)
 
 module.exports = router;
