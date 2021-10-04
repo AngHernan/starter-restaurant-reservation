@@ -8,5 +8,6 @@ router.route("/")
 
 router.route("/:table_id/seat")
     .put(controller.seat)
+    .delete(controller.unseat)
 
 module.exports = router;

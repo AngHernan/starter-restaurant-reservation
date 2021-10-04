@@ -2,6 +2,7 @@ const date = "20:00:00"
 const time = "2020-12-31"
 const date1 = (time + ' ' + date)
 let valid = new Date(date1)
+reservation = 'hi'
 
 const current = new Date()
 
@@ -10,7 +11,7 @@ console.log(valid.getHours())
 console.log(valid.getMinutes())
 console.log(valid.toString().split(' ')[0])
 console.log(valid.getDay() === 2)
-
+console.log(['finished', 'booked', 'seated'].includes(reservation))
 
 {/*
 function validTime(req, res, next){

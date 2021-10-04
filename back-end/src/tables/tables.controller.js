@@ -12,19 +12,28 @@ async function list(req, res) {
     res.json({data});
   }
 
-  async function create(req, res){
-    const data = await service.create(req.body.data);
-    res.status(201).json({ data });
-  }
+async function create(req, res){
+  const data = await service.create(req.body.data);
+  res.status(201).json({ data });
+}
 
-  async function update(req, res, next){
-    const table_id = req.params.table_id;
-    const reservation_id = req.body.data.reservation_id;
-    updated = await service.update(table_id, reservation_id);
-    await reservationService.updateStatus(reservation_id, "seated");
-  
-    res.status(200).json({updated});
-  };
+async function update(req, res, next){
+  const table_id = req.params.table_id;
+  const reservation_id = req.body.data.reservation_id;
+  updated = await service.update(table_id, reservation_id);
+  await reservationService.updateStatus(reservation_id, "seated");
+
+  res.status(200).json({updated});
+};
+
+async function unseat(req, res, next){
+  const table = res.locals.table;
+  if(table.occupied === false) return next({status: 400, message: `table is not occupied`})
+
+  updated = await service.unseat(table.table_id)
+
+  res.status(200).json({updated})
+}
 
 {/*
   //########################################Validation########################################//
@@ -81,7 +90,7 @@ async function tableExists(req, res, next){
   const {table_id} = req.params;
   const table = await service.read(Number(table_id));
   if(!table){ 
-    return next({ status: 404, message: `Table cannot be found.` });
+    return next({ status: 404, message: `Table ${table_id} cannot be found.` });
   }
   res.locals.table = table;
   next()
@@ -125,5 +134,10 @@ module.exports = {
       hasCap,
       isOccupied,
       asyncErrorBoundary(update),
+    ],
+
+    unseat: [
+      asyncErrorBoundary(tableExists),
+      asyncErrorBoundary(unseat),
     ],
 }
