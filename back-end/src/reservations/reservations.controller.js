@@ -46,6 +46,13 @@ async function reservationExists(req, res, next) {
   next({ status: 404, message: `reservation_id not found: ${reservation_id}` });
 }
 
+function checkStatus(req, res, next){
+  const {data: {status} = {}} = req.body;
+  if(status === 'seated') return next({status: 400, message:`status is seated`});
+  if(status === 'finished') return next({status: 400, message:`status is finished`});
+  next();
+}
+
 function hasFirstName(req, res, next){
   const {data: {first_name} = {}} = req.body;
   if(first_name){
@@ -168,29 +175,61 @@ async function resTaken(req, res, next){
   next({status:400, message: "time taken"});
 }
 
+function statusCheck(req, res, next){
+  const reservation = res.locals.reservation;
+  if(reservation.status === 'finished') return next({status:400, message: `a finished reservation cannot be updated`})
+  next();
+}
+
+async function update(req, res, next){
+  const {reservation_id} = req.params;
+  const updateTo = req.body.status;
+  if(!updateTo) return next({status: 400, message: 'unknown'});
+
+  await service.statusUpdate(reservation_id, updatedTo);
+  const updated = await service.read(reservation_id);
+
+  res.status(200).json({updated})
+}
+
+{/*
+async function update(req, res, next){
+  const table_id = req.params.table_id;
+  const reservation_id = req.body.data.reservation_id;
+  updated = await service.update(table_id, reservation_id);
+  await reservationService.updateStatus(reservation_id, "seated");
+
+  res.status(200).json({updated});
+};
+*/}
+
 module.exports = {
-  
-    list: [
-      asyncErrorBoundary(list)
+  list: [
+    asyncErrorBoundary(list)
+  ],
+  create: [
+    checkStatus,
+    hasFirstName, 
+    hasLastName, 
+    hasMobileNumber, 
+    hasReservationDate, 
+    hasReservationTime, 
+    hasPeople,
+    peopleNan,
+    validDate,
+    notPast,
+    notTues,
+    validTime,
+    resTaken,
+    asyncErrorBoundary(create)
     ],
-    create: [
-        hasFirstName, 
-        hasLastName, 
-        hasMobileNumber, 
-        hasReservationDate, 
-        hasReservationTime, 
-        hasPeople,
-        peopleNan,
-        validDate,
-        notPast,
-        notTues,
-        validTime,
-        resTaken,
-        asyncErrorBoundary(create)
-      ],
-    
-      read: [
-        asyncErrorBoundary(reservationExists),
-        asyncErrorBoundary(read)
-      ],
+  changeStatus: [
+    asyncErrorBoundary(reservationExists),
+    statusCheck,
+    asyncErrorBoundary(update)
+    ],    
+  read: [
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(read)
+    ],
 };
