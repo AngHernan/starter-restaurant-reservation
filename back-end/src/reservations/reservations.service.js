@@ -36,14 +36,14 @@ function resTaken(date, time){
 
 function updateStatus (reservation_id, status){
     return knex("reservations")
-      .where({ reservation_id: reservation_id })
+      .where({ "reservation_id": reservation_id })
       .update({ status: status })
   };
 
 function statusUpdate(reservation_id, status){
     return knex("reservations")
-        .where({ reservation_id: reservation_id })
-        .update({ status: status })
+        .where({ "reservation_id": reservation_id })
+        .update({ "status": status })
         .returning("status")
 }
 
