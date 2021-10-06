@@ -197,17 +197,6 @@ async function update(req, res, next){
   });
 }
 
-{/*
-async function update(req, res, next){
-  const table_id = req.params.table_id;
-  const reservation_id = req.body.data.reservation_id;
-  updated = await service.update(table_id, reservation_id);
-  await reservationService.updateStatus(reservation_id, "seated");
-
-  res.status(200).json({updated});
-};
-*/}
-
 module.exports = {
   list: [
     asyncErrorBoundary(list)
