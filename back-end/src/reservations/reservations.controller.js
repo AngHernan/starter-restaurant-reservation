@@ -39,8 +39,8 @@ async function update(req, res, next){
   const {status} = req.body.data;
   const data = await service.statusUpdate(reservation_id, status);
 
-  res.status(200).json({
-    status: data[0],
+  res.status(200).json({ data: {
+    status: data[0],}
   });
 }
 
@@ -49,8 +49,8 @@ async function reservationUpdate(req, res, next){
     ...req.body.data,
   };
   data = await service.reservationUpdate(updatedReservation);
-  await 
-  res.status(200).json(data);
+  
+  res.status(200).json({data: data[0]});
 }
 {/*
   //########################################Validation########################################//
