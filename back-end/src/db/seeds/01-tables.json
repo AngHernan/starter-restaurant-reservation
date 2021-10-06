@@ -6,7 +6,7 @@
     },
     {
         "table_name": "Bar #2",
-       
+
         "capacity": 2,
         "occupied": false
     },   
