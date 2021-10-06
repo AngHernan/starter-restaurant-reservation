@@ -6,15 +6,20 @@
  const service = require("./reservations.service");
  const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  
+
 {/*
   //########################################C.R.U.D.########################################//
                                         Functions bellow
 */}
 
 async function list(req, res) {
-  const date = req.query.date;
-  const data = date ? await service.readDate(date) : await service.list();
+  const {date, mobile_number} = req.query
+  let data;
+  if(date) data = await service.readDate(date); 
+  else if(mobile_number) data = await service.search(mobile_number);
+  else data = await service.list();
   //Sort them now
+
   res.json({data});
 }
 
@@ -29,6 +34,24 @@ async function create(req, res){
   res.status(201).json({ data });
 }
 
+async function update(req, res, next){
+  const {reservation_id} = res.locals.reservation;
+  const {status} = req.body.data;
+  const data = await service.statusUpdate(reservation_id, status);
+
+  res.status(200).json({
+    status: data[0],
+  });
+}
+
+async function reservationUpdate(req, res, next){
+  const updatedReservation = {
+    ...req.body.data,
+  };
+  data = await service.reservationUpdate(updatedReservation);
+  await 
+  res.status(200).json(data);
+}
 {/*
   //########################################Validation########################################//
                                         functions bellow
@@ -80,6 +103,15 @@ function hasMobileNumber(req, res, next){
   next({status: 400, message: "mobile_number is missing"});
 }
 
+function validDate(req, res, next){
+  const {data: {reservation_date} = {}} = req.body;
+  let valid = new Date(reservation_date)
+  if(valid.toString() != 'Invalid Date'){
+    return next();
+  }
+  next({status:400, message: "reservation_date is not valid"});
+  }
+
 function hasReservationDate(req, res, next){
   const {data: {reservation_date} = {}} = req.body;
   if(reservation_date){
@@ -121,15 +153,6 @@ function peopleNan(req, res, next){
   }
   next({status: 400, message: "people is not a number"});
 }
-
-function validDate(req, res, next){
-  const date = res.locals.reservation_date;
-  let valid = new Date(date)
-  if(valid.toString() != 'Invalid Date'){
-    return next();
-  }
-  next({status:400, message: "reservation_date is not valid"});
-  }
 
 function notPast(req, res, next){ 
   const date = res.locals.reservation_date;
@@ -183,18 +206,8 @@ function resCheck(req, res, next){
 
 function statusCheck(req, res, next){
   const {status} = req.body.data;
-  if(status !== 'finished' && status !== 'booked' && status !== 'seated') return next({status:400, message: `unknown`})
+  if(status !== 'finished' && status !== 'booked' && status !== 'seated' && status !== 'cancelled') return next({status:400, message: `unknown`})
   next();
-}
-
-async function update(req, res, next){
-  const {reservation_id} = res.locals.reservation;
-  const {status} = req.body.data;
-  const data = await service.statusUpdate(reservation_id, status);
-
-  res.status(200).json({
-    data: { status: data[0] },
-  });
 }
 
 module.exports = {
@@ -222,9 +235,21 @@ module.exports = {
     resCheck,
     statusCheck,
     asyncErrorBoundary(update)
-    ],    
+    ],  
+  updateReservation: [
+    asyncErrorBoundary(reservationExists),
+    hasFirstName,
+    hasLastName,
+    hasMobileNumber,
+    hasReservationDate,
+    validDate,
+    hasReservationTime,
+    hasPeople,
+    peopleNan,
+    asyncErrorBoundary(reservationUpdate)
+  ], 
   read: [
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(read)
-    ],
+  ],
 };

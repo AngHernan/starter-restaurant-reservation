@@ -21,7 +21,7 @@ async function update(req, res, next){
   const table_id = req.params.table_id;
   const reservation_id = req.body.data.reservation_id;
   updated = await service.update(table_id, reservation_id);
-  await reservationService.updateStatus(reservation_id, "seated");
+  await reservationService.statusUpdate(reservation_id, "seated");
 
   res.status(200).json({updated});
 };
@@ -31,7 +31,7 @@ async function unseat(req, res, next){
   const reservation_id = req.body.data.reservation_id;
   if(table.occupied === false) return next({status: 400, message: `table is not occupied`})
   
-  await reservationService.updateStatus(reservation_id, "finished");
+  await reservationService.statusUpdate(reservation_id, "finished");
   updated = await service.unseat(table.table_id)
 
   res.status(200).json({updated})
