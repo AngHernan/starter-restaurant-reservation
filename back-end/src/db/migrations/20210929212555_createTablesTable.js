@@ -1,16 +1,16 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable("tables", (table) => {
-      table.increments("table_id").primary()
-      table.integer("reservation_id").unsigned()
+      table.increments("table_id").primary();
+      table.integer("reservation_id").unsigned();
       table
           .foreign("reservation_id")
           .references("reservation_id")
           .inTable("reservations")
           .onDelete("CASCADE")
-      table.string("table_name")
-      table.integer("capacity")
-      table.boolean("occupied").defaultTo(false).notNullable()
+      table.string("table_name").notNullable();
+      table.integer("capacity").notNullable();
+      table.boolean("occupied").defaultTo(false);
       table.timestamps(true, true);
   })
 };

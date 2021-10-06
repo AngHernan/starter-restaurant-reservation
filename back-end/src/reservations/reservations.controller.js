@@ -175,21 +175,26 @@ async function resTaken(req, res, next){
   next({status:400, message: "time taken"});
 }
 
-function statusCheck(req, res, next){
+function resCheck(req, res, next){
   const reservation = res.locals.reservation;
   if(reservation.status === 'finished') return next({status:400, message: `a finished reservation cannot be updated`})
   next();
 }
 
+function statusCheck(req, res, next){
+  const {status} = req.body.data;
+  if(status !== 'finished' && status !== 'booked' && status !== 'seated') return next({status:400, message: `unknown`})
+  next();
+}
+
 async function update(req, res, next){
-  const {reservation_id} = req.params;
-  const updateTo = req.body.status;
-  if(!updateTo) return next({status: 400, message: 'unknown'});
+  const {reservation_id} = res.locals.reservation;
+  const {status} = req.body.data;
+  const data = await service.statusUpdate(reservation_id, status);
 
-  await service.statusUpdate(reservation_id, updatedTo);
-  const updated = await service.read(reservation_id);
-
-  res.status(200).json({updated})
+  res.status(200).json({
+    data: { status: data[0] },
+  });
 }
 
 {/*
@@ -225,6 +230,7 @@ module.exports = {
     ],
   changeStatus: [
     asyncErrorBoundary(reservationExists),
+    resCheck,
     statusCheck,
     asyncErrorBoundary(update)
     ],    
