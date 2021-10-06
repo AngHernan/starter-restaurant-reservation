@@ -28,13 +28,13 @@ async function update(req, res, next){
 
 async function unseat(req, res, next){
   const table = res.locals.table;
-  const reservation_id = req.body.data.reservation_id;
+  const reservation_id = table.reservation_id;
   if(table.occupied === false) return next({status: 400, message: `table is not occupied`})
   
   await reservationService.statusUpdate(reservation_id, "finished");
   updated = await service.unseat(table.table_id)
 
-  res.status(200).json({updated})
+  res.status(200).json({updated});
 }
 
 {/*
