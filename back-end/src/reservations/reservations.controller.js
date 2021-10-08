@@ -148,10 +148,10 @@ function hasPeople(req, res, next){
 
 function peopleNan(req, res, next){
   const people = res.locals.people;
-  if(Number.isInteger(people)){
+  if(typeof people === "number"){
    return next();
   }
-  next({status: 400, message: "people is not a number"});
+  next({status: 400, message: "people is not a number lol"});
 }
 
 function notPast(req, res, next){ 
@@ -168,7 +168,7 @@ function notPast(req, res, next){
 function notTues(req, res, next){ 
   let date = res.locals.reservation_date;
   let valid = new Date(date)
-  if(valid.getDay() === 2){
+  if(valid.getDay() !== 2){
     
     return next();
   }
