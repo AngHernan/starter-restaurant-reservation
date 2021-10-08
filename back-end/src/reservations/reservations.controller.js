@@ -168,7 +168,7 @@ function notPast(req, res, next){
 function notTues(req, res, next){ 
   let date = res.locals.reservation_date;
   let valid = new Date(date)
-  if(valid.getDay() !== 2){
+  if(valid.getDay() !== 1){
     
     return next();
   }
