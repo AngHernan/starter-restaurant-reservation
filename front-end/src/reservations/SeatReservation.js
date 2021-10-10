@@ -1,6 +1,13 @@
+import React, { useState } from "react";
+import {Link} from "react-router-dom";
+// seatReservation from "../utils/api"
 
+export default function SeatReservation(){
+    const [] = useState({});
 
-
-export default function SeatReservation(_){
-    return (<>SeatReservation Working</>)
+    return (
+    <>
+    SeatReservation Working
+    </>
+        )
 }
