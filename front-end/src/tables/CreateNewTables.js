@@ -12,26 +12,29 @@ export default function CreateTable(){
 
     const handleSubmit = (event) => {
         const abortController = new AbortController();
-        console.log("before submitting",newTable)
+        console.log("before submitting",newTable);
         event.preventDefault();
-        async function callCreaTable(){
+        async function callCreateTable(){
             try {
-                //const reservation = {...newTable}
-                await createTable({data: newTable}, abortController.signal);
+                const table = {
+                    ...newTable,
+                    capacity: Number(newTable.capacity),
+                };
+                await createTable({data: table}, abortController.signal);
             } catch (err) {
                 if (err.name === "AbortError") {
-                    console.info('Aboorted')
+                    console.info('Aboorted');
                 } else {
                     throw err;
-                }
-            }
-        }
+                };
+            };
+        };
         callCreateTable();
     
         return () => {
             abortController.abort();
-        }
-    }
+        };
+    };
     
     return (
         <form>

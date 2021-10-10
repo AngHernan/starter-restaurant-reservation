@@ -5,17 +5,15 @@ import {createReservation} from "../utils/api";
 export default function CreateReservation(){
     const [newReservation, setNewReservation] = useState({});
     const handleChange = (event) => {
-        //const {first_name, last_name, mobile_number, reservation_date, reservation_time, people} = event.target;
         const { name, value } = event.target;
-        //setNewReservation({...newReservation, first_name, last_name, mobile_number, reservation_date, reservation_time, people});
         setNewReservation({...newReservation, [name]: value});
 
     }
 
     const handleSubmit = (event) => {
         const abortController = new AbortController();
-        console.log("before submitting",newReservation)
-        console.log("date", newReservation.reservation_date)
+        console.log("before submitting",newReservation);
+        console.log("date", newReservation.reservation_date);
         event.preventDefault();
         async function callCreateReservation(){
             try {
@@ -25,16 +23,16 @@ export default function CreateReservation(){
                 }
 
                 await createReservation({data: reservation}, abortController.signal);
-                console.log("after",reservation)
-                console.log("date", reservation.reservation_date)
+                console.log("after",reservation);
+                console.log("date", reservation.reservation_date);
             } catch (err) {
                 if (err.name === "AbortError") {
-                    console.info('Aboorted')
+                    console.info('Aboorted');
                 } else {
                     throw err;
-                }
-            }
-        }
+                };
+            };
+        };
         callCreateReservation();
     
         return () => {
@@ -53,7 +51,7 @@ export default function CreateReservation(){
             </div>
             <div className="mb-3">
                 <label for="mobile_number" className="form-label">Mobile Number:</label>
-                <input type="tel" className="form-control" name="mobile_number" id="mobile_number"placeholder="Mobile Number" value={newReservation?.mobile_number} onChange={handleChange}/>
+                <input type="tel" className="form-control" name="mobile_number" id="mobile_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Mobile Number" value={newReservation?.mobile_number} onChange={handleChange} required/>
             </div>
             <div className="mb-3">
                 <label for="reservation_date" className="form-label">Date of reservation:</label>
