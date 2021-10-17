@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { listReservations, listTables } from "../utils/api";
+import {previous, today, next} from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservationsView from "./DashboardReservationsView"
 import DashboardTablesView from "./DashboardTablesView"
@@ -23,7 +24,7 @@ function Dashboard({ date }) {
     const abortController = new AbortController();
     setReservationsError(null);
     setTablesError(null);
-    listReservations('', abortController.signal)
+    listReservations({date}, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError)
     listTables(abortController.signal)
@@ -35,7 +36,29 @@ function Dashboard({ date }) {
 
   const displayReservations = reservations.map((reservation) => DashboardReservationsView({...reservation}))
   const displayTables = tables.map((table) => DashboardTablesView({...table}))
+{/*
+  const handleDateChange = (event) => {
+    event.preventDefault();
+    const action = event.target.id;
 
+    if (action.toString() === "previous"){
+      console.log("previous works")
+      const newDate = previous(date)
+    }
+    else if (action.toString() === "today"){
+      date = today();
+      loadDashboard();
+      console.log("today works")
+    }
+    else if (action.toString() === "next"){
+      console.log("next works")
+      date = next(date);
+      loadDashboard();
+    } else {
+      console.log("none")
+    }
+  }
+   */}
 {/*
   <div className="d-md-flex mb-12">
         
@@ -53,31 +76,32 @@ function Dashboard({ date }) {
 
   return (
     <main>
-      <div className="container">
+      <div className="container p-3 mb-2 bg-secondary text-white">
         <div className="row justify-content-center">
-          <div className="col-4">
-            <h1 className="m-5 pl-3">Dashboard</h1>
+          <div className="col-6 border border-primary p-3 mb-2 bg-dark text-white">
+            <h1 className="m-3 pl-3">Reservations Dashboard</h1>
+          </div>
+        </div>
+       
+        <div className="row justify-content-center">
+          <div className="col-1.5">
+            <button id="previous" type="previous"  class="btn btn-primary btn-sm m-2">Previous</button>
+          </div>
+          <div className="col-1.5">
+            <button id="today" type="today"  class="btn btn-primary btn-sm m-2">Today</button>
+          </div>
+          <div className="col-1.5">
+            <button id="next" type="next"  class="btn btn-primary btn-sm m-2">Next</button>
           </div>
         </div>
         <div className="row justify-content-center">
-          <div className="col-5">
-            <h4 className="m-3 pl-5">Reservations for {date}</h4>
+          <div className="col-2.5">
+            <h4 className="m-3">{date}</h4>
           </div>
           </div>
         <div className="row justify-content-center">
-          <div className="col-1.5">
-            <button type="button" class="btn btn-primary btn-sm m-2">Previous</button>
-          </div>
-          <div className="col-1.5">
-            <button type="button" class="btn btn-primary btn-sm m-2">Today</button>
-          </div>
-          <div className="col-1.5">
-            <button type="button" class="btn btn-primary btn-sm m-2">Next</button>
-          </div>
-        </div>
-        <div className="row justify-content-center">
-          <div className="col-4">
-            <input type="date" className="form-control m-2" name="reservation_date" id="reservation_date" placeholder="Date of Reservation"/>
+          <div className="col-3">
+            <input type="date" className="form-control" name="reservation_date" id="reservation_date" placeholder="Date of Reservation"/>
           </div>
         </div>
       </div>

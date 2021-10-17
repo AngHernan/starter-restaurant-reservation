@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import {Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {createReservation} from "../utils/api";
 
 export default function CreateReservation(){
@@ -40,6 +40,8 @@ export default function CreateReservation(){
         }
     }
     
+    const history = useHistory();
+
     return (
         <form>
             <div className="mb-3">
@@ -66,7 +68,7 @@ export default function CreateReservation(){
                 <label for="people" className="form-label">Number of people:</label>
                 <input type="number" min="1" pattern="\d+" className="form-control" name="people" id="people" placeholder='10' value={newReservation?.people} onChange={handleChange}/>
             </div>
-            <Link to={'/'} type="button" className="buttonSpace btn btn-secondary">Cancel</Link>
+            <button onClick={() => history.goBack()} type="cancel" className="buttonSpace btn btn-secondary">Cancel</button>
             <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
         </form>
     )
