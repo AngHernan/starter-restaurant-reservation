@@ -1,11 +1,13 @@
 import React from "react";
-//import {Link} from "react-router-dom";
+import { useRouteMatch } from "react-router";
+//path.includes("seat") ? null : 
 
-export default function DashboardReservationsView({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}){
 
+export default function DashboardReservationsView({reservations}){
+  const { path } = useRouteMatch();
+   const displayReservations = reservations.map(({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => {
     
         return (
-        <>
             <tr>
                 <th scope="row">{reservation_id}</th>
                 <td>{first_name}</td>
@@ -13,9 +15,41 @@ export default function DashboardReservationsView({reservation_id, first_name, l
                 <td>{mobile_number}</td>
                 <td>{reservation_date}</td>
                 <td>{reservation_time}</td>
-                <td><a href={`/reservations/${reservation_id}/seat`} type="button" className="btn btn-primary">Seat</a></td>
-            </tr>
-        </>
-            
-        )
+                <td>{people}</td>
+                <td>{status}</td>
+                <td>{status ===
+                "seated" ? null : (
+                <>
+                  <a
+                    href={`/reservations/${reservation_id}/seat`}
+                    className="btn btn-outline-primary"
+                  >
+                    Seat
+                  </a>
+                  </>)}</td>
+            </tr>)
+})
+
+
+        return (<>
+            <table className="table caption-top">
+  <caption>Reservations</caption>
+  <thead>
+    <tr>
+      <th scope="col">ID #</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Mobile Number</th>
+      <th scope="col">Date</th>
+      <th scope="col">Time</th>
+      <th scope="col">People</th>
+      <th scope="col">Status</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {displayReservations}
+  </tbody>
+</table>
+       </> )
     }

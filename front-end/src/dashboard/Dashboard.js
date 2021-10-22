@@ -4,6 +4,10 @@ import {previous, today, next} from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservationsView from "./DashboardReservationsView"
 import DashboardTablesView from "./DashboardTablesView"
+import { Link, useLocation } from "react-router-dom";
+import queryString from "query-string"
+
+
 
 /**
  * Defines the dashboard page.
@@ -18,15 +22,20 @@ function Dashboard({ date }) {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-  useEffect(loadDashboard, [date]);
+  const [dateOfReservations, setDateOfReservations] = useState(date);
 
-  function loadDashboard() {
+  const {search} = useLocation();
+  const searchDate = queryString.parse(search).date;
+
+  console.log(searchDate)
+
+  useEffect(loadDashboard, [search, dateOfReservations, date, searchDate]);
+  useEffect(resetDate, [search, date]);
+  useEffect(loadTables,[]);
+
+  function loadTables() {
     const abortController = new AbortController();
-    setReservationsError(null);
     setTablesError(null);
-    listReservations({date}, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError)
     listTables(abortController.signal)
       .then(setTables)
       .catch(setTablesError)
@@ -34,49 +43,35 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
-  const displayReservations = reservations.map((reservation) => DashboardReservationsView({...reservation}))
-  const displayTables = tables.map((table) => DashboardTablesView({...table}))
-{/*
-  const handleDateChange = (event) => {
-    event.preventDefault();
-    const action = event.target.id;
+  function loadDashboard() {
+    const abortController = new AbortController();
+    setReservationsError(null);
 
-    if (action.toString() === "previous"){
-      console.log("previous works")
-      const newDate = previous(date)
-    }
-    else if (action.toString() === "today"){
-      date = today();
-      loadDashboard();
-      console.log("today works")
-    }
-    else if (action.toString() === "next"){
-      console.log("next works")
-      date = next(date);
-      loadDashboard();
-    } else {
-      console.log("none")
-    }
+    if (searchDate) {
+    setDateOfReservations(searchDate);
+    listReservations({date: searchDate}, abortController.signal) 
+      .then(setReservations)
+      .catch(setReservationsError)
+      } else {
+    setDateOfReservations(date)
+    listReservations({date}, abortController.signal)
+      .then(setReservations)
+      .catch(setReservationsError)
+      }
+      return () => abortController.abort();
   }
-   */}
-{/*
-  <div className="d-md-flex mb-12">
-        
-      
 
- </div>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Tables</h4>
-      </div>
-      <ErrorAlert error={tablesError} />
-      <div class="container-fluid">
-      {displayTables}
-      </div>
-*/}
+  function resetDate() {
+    if(search) return
+    const abortController = new AbortController();
+    setDateOfReservations(date)
+    return () => abortController.abort();
+  }
 
   return (
+
     <main>
-      <div className="container p-3 mb-2 bg-secondary text-white">
+      <div className="container p-3 my-2 bg-secondary text-white">
         <div className="row justify-content-center">
           <div className="col-6 border border-primary p-3 mb-2 bg-dark text-white">
             <h1 className="m-3 pl-3">Reservations Dashboard</h1>
@@ -85,18 +80,18 @@ function Dashboard({ date }) {
        
         <div className="row justify-content-center">
           <div className="col-1.5">
-            <button id="previous" type="previous"  class="btn btn-primary btn-sm m-2">Previous</button>
+          <button id="today" type="today" className="btn btn-outline-primary btn m-2"><Link to={`/dashboard?date=${previous(dateOfReservations)}`}>Previous</Link></button>
           </div>
           <div className="col-1.5">
-            <button id="today" type="today"  class="btn btn-primary btn-sm m-2">Today</button>
+          <button  id="today" type="today" className="btn btn-outline-primary btn m-2"><Link to={`/dashboard?date=${today()}`}>Today</Link></button>
           </div>
           <div className="col-1.5">
-            <button id="next" type="next"  class="btn btn-primary btn-sm m-2">Next</button>
+          <button id="next" type="next" className="btn btn-outline-primary btn m-2"><Link to={`/dashboard?date=${next(dateOfReservations)}`}>Next</Link></button>
           </div>
         </div>
         <div className="row justify-content-center">
           <div className="col-2.5">
-            <h4 className="m-3">{date}</h4>
+            <h4 className="m-3">{dateOfReservations}</h4>
           </div>
           </div>
         <div className="row justify-content-center">
@@ -107,24 +102,12 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       <div>
-      <table class="table caption-top">
-  <caption>Reservations</caption>
-  <thead>
-    <tr>
-      <th scope="col">ID #</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Mobile Number</th>
-      <th scope="col">Date</th>
-      <th scope="col">Time</th>
-      <th scope="col">Seat?</th>
-    </tr>
-  </thead>
-  <tbody>
-    {displayReservations}
-  </tbody>
-</table>
+      <DashboardReservationsView reservations={reservations} />
      </div>
+     <ErrorAlert error={tablesError} />
+     <div>
+     <DashboardTablesView tables={tables}/>
+    </div>
     </main>
   );
 }

@@ -1,20 +1,46 @@
 import React, { useState} from "react";
 import {useHistory} from "react-router-dom";
 import {createReservation} from "../utils/api";
+import { validateReservation } from "../utils/validations";
 
 export default function CreateReservation(){
     const [newReservation, setNewReservation] = useState({});
+    const [errors, setErrors] = useState({"messages":[]});
+
+    const history = useHistory();
+
+
     const handleChange = (event) => {
+        setErrors({"messages": [] });
         const { name, value } = event.target;
         setNewReservation({...newReservation, [name]: value});
-
+        
     }
 
     const handleSubmit = (event) => {
+        
         const abortController = new AbortController();
-        console.log("before submitting",newReservation);
-        console.log("date", newReservation.reservation_date);
+        
         event.preventDefault();
+        
+        console.log("before submitting", newReservation);
+        console.log("date", newReservation.reservation_date);
+
+        const valid = Date(newReservation.reservation_date);
+        console.log(valid)
+
+        console.log(newReservation, errors)
+
+        const validated = validateReservation(newReservation, errors);
+
+        if(!validated){
+            console.log(validated)
+            console.log(errors.messages.join(' '))
+            console.log(errors.messages)
+            setErrors({...errors})
+            return errors.messages;
+        }
+       
         async function callCreateReservation(){
             try {
                 const reservation = {
@@ -23,8 +49,8 @@ export default function CreateReservation(){
                 }
 
                 await createReservation({data: reservation}, abortController.signal);
-                console.log("after",reservation);
-                console.log("date", reservation.reservation_date);
+
+                history.replace(`/dashboard?date=${reservation.reservation_date}`)
             } catch (err) {
                 if (err.name === "AbortError") {
                     console.info('Aboorted');
@@ -40,10 +66,12 @@ export default function CreateReservation(){
         }
     }
     
-    const history = useHistory();
-
+    const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
+    
     return (
         <form>
+            {errors.messages.length? <div className="alert alert-danger" role="alert">
+  {errorDisplay}</div>: <div></div>}
             <div className="mb-3">
                 <label for="first_name" className="form-label">First Name:</label>
                 <input type="text" className="form-control" name="first_name" id="first_name" placeholder="First Name" value={newReservation?.first_name} onChange={handleChange}/>
@@ -54,7 +82,7 @@ export default function CreateReservation(){
             </div>
             <div className="mb-3">
                 <label for="mobile_number" className="form-label">Mobile Number:</label>
-                <input type="tel" className="form-control" name="mobile_number" id="mobile_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Mobile Number" value={newReservation?.mobile_number} onChange={handleChange} required/>
+                <input type="tel" className="form-control" name="mobile_number" id="mobile_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="xxx-xxx-xxxx" value={newReservation?.mobile_number} onChange={handleChange} required/>
             </div>
             <div className="mb-3">
                 <label for="reservation_date" className="form-label">Date of reservation:</label>

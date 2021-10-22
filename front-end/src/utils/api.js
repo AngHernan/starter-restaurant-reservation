@@ -95,12 +95,15 @@ export async function updateReservation(reservation_id, status, signal) {
 };
 
 
-export async function updateTableStatus(table_id, reservation_id, signal) {
+export async function updateTableStatus(table_id, body, met, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`)
+  console.log(met)
+  console.log(body)
+  console.log(table_id)
   const options = {
-    method:'PUT',
+    method: met,
     headers,
-    body: JSON.stringify(reservation_id),
+    body: JSON.stringify(body),
     signal,
   };
   console.log(url)
@@ -133,3 +136,4 @@ export async function createTable(table, signal) {
   
   return await fetchJson(url, options, {});
 }
+

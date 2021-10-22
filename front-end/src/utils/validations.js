@@ -1,0 +1,67 @@
+export function validateReservation(reservation, errors){
+    errors.messages = []
+    const {
+        first_name,
+        last_name,
+        mobile_number,
+        reservation_time,
+        reservation_date,
+        people,
+    } = reservation;
+    const current = new Date();
+    let currentDate = new Date(current.toUTCString())
+
+    const valid = new Date(reservation_date);
+    if (!valid) errors.messages.push("not valid date");
+
+    let validDate = new Date(valid.toUTCString())
+
+    console.log(reservation)
+    console.log(first_name)
+    console.log("checkking name",first_name === "")
+    console.log("CHECKING VALIDATION:",valid)
+
+    console.log("########################################")
+    console.log("current:", current.toUTCString())
+    
+    console.log(currentDate)
+    console.log("########################################")
+    console.log("Valid utc:", valid.toUTCString())
+    
+    console.log(validDate)
+
+    console.log("########################################")
+    console.log(validDate < currentDate)
+ 
+    console.log("########################################")
+
+    if(!first_name) errors.messages.push("Missing first name")
+    if(!last_name) errors.messages.push("Missing last name")
+    if(!mobile_number) errors.messages.push("Missing mobile number")
+    if(!reservation_time) errors.messages.push("Missing time")
+    if(!reservation_date)errors.messages.push("Missing date")
+    if(!people) errors.messages.push("Missing paty size")
+
+    if(valid.toString() === 'Invalid Date'){
+        errors.messages.push('Date is not valid') 
+    
+    }
+    if(validDate < currentDate){
+        errors.messages.push('Date must be in the future') 
+    
+    }
+    if(valid.getDay() === 1){
+        errors.messages.push('closed on tuesdays')
+    }
+    if(reservation_time < "10:30"){
+        errors.messages.push('Pick a later time, we open at 10:30 AM');
+      }
+    if(reservation_time > "21:30"){
+        errors.messages.push('Pick an earlier time, we close at 9:30 PM');
+      }
+    if(errors.messages.length > 0){
+        return false;
+    }
+
+    return true;
+}

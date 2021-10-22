@@ -1,8 +1,11 @@
 import React, { useState} from "react";
-import {Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {createTable} from "../utils/api";
 
+
+
 export default function CreateTable(){
+    const history = useHistory();
     const [newTable, setNewTable] = useState({});
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -21,6 +24,7 @@ export default function CreateTable(){
                     capacity: Number(newTable.capacity),
                 };
                 await createTable({data: table}, abortController.signal);
+                history.replace(`/dashboard`);
             } catch (err) {
                 if (err.name === "AbortError") {
                     console.info('Aboorted');
@@ -46,7 +50,7 @@ export default function CreateTable(){
                 <label for="capacity" className="form-label">Capacity of Table:</label>
                 <input type="number" min="1" pattern="\d+" className="form-control" name="capacity" id="capacity" placeholder='10' value={newTable?.capacity} onChange={handleChange}/>
             </div>
-            <Link to={'/'} type="button" className="buttonSpace btn btn-secondary">Cancel</Link>
+            <button onClick={() => history.goBack()} type="button" className="buttonSpace btn btn-secondary">Cancel</button>
             <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
         </form>
     )

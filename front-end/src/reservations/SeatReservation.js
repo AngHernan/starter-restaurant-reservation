@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useHistory } from "react-router";
 import { listTables, updateTableStatus, readReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 import {updateReservation} from "../utils/api"
 
 export default function SeatReservation(){
+    const history = useHistory();
     const [tables, setTables] = useState([]);
     const [tablesError, setTablesError] = useState(null);
     
@@ -15,15 +16,15 @@ export default function SeatReservation(){
     const [seatReservationError, setSeatReservationError] = useState(null);
     const {reservation_id} = useParams();
 
+    const [selectedTable, setSelectedTable] = useState(null)
     useEffect(loadTables, []);
-    useEffect(loadReservation, []);
+    useEffect(loadReservation, [reservation_id]);
     
     function loadTables(){
             const abortController = new AbortController();
             setTablesError(null);
             listTables(abortController.signal)
                 .then(setTables)
-                .then(console.log(tables))
                 .catch(setTablesError)
             return () => abortController.abort();
             }
@@ -33,35 +34,26 @@ export default function SeatReservation(){
         setCurrentReservationError(null);
         readReservation(reservation_id, abortController.signal)
             .then(setCurrentReservation)
-            .then(console.log(currentReservation))
             .catch(setCurrentReservationError)
         return () => abortController.abort();
         }
 
-    const handleSubmit = (event) =>{
-        const table_id = document.getElementById('table').value
-        const abortController = new AbortController();
-        event.preventDefault();
-        async function callUpdateReservation (){
-            try{
-                const status = {data: { status: "seated" } };
-                const id = { data: { reservation_id: reservation_id } }
-                await updateTableStatus(table_id, id, abortController.signal)
-                await updateReservation(reservation_id, status, abortController.signal)
-                
-                } catch (err) {
-                    if (err.name === "AbortError") {
-                        console.info('Aboorted');
-                        
-                    } else {
-                        setSeatReservationError(err);
-                        throw err;
-                    };
-                };
-            };
-            callUpdateReservation();
+        async function handleChange({ target }) {
+            console.log(target.value, target)
+            setSelectedTable(target.value);
+          }
 
-            return () => {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log('table:', selectedTable)
+        const table_id = selectedTable
+        const abortController = new AbortController();
+        const status = {data: { status: "seated" } };
+        const id = { data: { reservation_id: reservation_id } }
+        updateTableStatus(table_id, id, 'PUT', abortController.signal)
+            .then(() => history.replace(`/dashboard`))
+            .catch(setSeatReservationError)
+        return () => {
                 abortController.abort();
             }
         }
@@ -70,24 +62,60 @@ export default function SeatReservation(){
         return  (<option value={table.table_id}>Table Name: {table.table_name} | Capacity: {table.capacity} | Status: {table.occupied? "Occupied": "Available"}</option>)
     })
 
-    console.log("hello:",tableOptions.value)
-
 
     return (
     <fragment> 
-        <div> 
-        <ErrorAlert error={currentReservationError} />
-            <h4>Update Reservation for: {currentReservation.first_name}</h4>
-            <h6>Party of: {currentReservation.people}</h6>
-    </div>
-        <ErrorAlert error={tablesError} />
-        <label for="tables">Which table? </label>
-        <select id="table" name="table_id">
-            {tableOptions}
-        </select>
+        <div className="container p-3 my-2 bg-dark text-white">
+            <div className="row m-5 justify-content-center">
+            <div className="col-4.5  p-3 bg-dark text-white">
+                <h1 className="m-3">Seat Reservation</h1>
+            </div>
+            </div>
+        </div>
+
+        <div className="container p-3 my-2 border border-primary bg-white text-white">
+            <div className="row my-3 justify-content-center">
+            <div className="col-5 align-self-center border border-primary p-3 bg-dark text-white">
+                <div className="row justify-content-center"><h4>{currentReservation.first_name} {currentReservation.last_name}</h4></div>
+                <div className="row justify-content-center"><h4>Party of {currentReservation.people}</h4></div>
+            </div>
+        </div>
+
+        <div className="row my-3 justify-content-center">
+            <div className="col-5 align-self-center border border-primary p-3 bg-dark text-white">
+                <div className="row justify-content-center"><h4>Phone #: </h4></div>
+                <div className="row justify-content-center"><h4>{currentReservation.mobile_number}</h4></div>
+            </div>
+         </div>
+
         
-        <button type="submit" onClick={handleSubmit}  className="btn btn-primary">Submit</button>
-        <ErrorAlert error={seatReservationError} />
+        <ErrorAlert error={currentReservationError} />
+        
+        </div>
+        <div className="container p-3 my-2 bg-dark text-white">
+        <div className="row mb-2 justify-content-center">
+            <div className="col-2.5 p-3 bg-dark text-white">
+                <h2>Select Table </h2>
+            </div>
+        </div>
+        <ErrorAlert error={tablesError} />
+            <ErrorAlert error={seatReservationError} />
+        <div className="row justify-content-center">
+            
+        <div className="col-4.5 m-2 p-3 border border-primary bg-dark text-white">
+            <label for="table"></label>
+            <select name="table" id="table" onChange={handleChange} class="form-select form-select-lg mb-2" aria-label="table">
+                {tableOptions}
+            </select>
+            
+            </div>
+            </div>
+            <div className="row justify-content-center">
+            <div className="col-1 p-2 bg-dark text-white">
+            <button type="submit" onClick={handleSubmit}  className="btn btn-outline-primary">Confirm</button>
+        </div>
+        </div>
+        </div>
     </fragment>
         )
 }
