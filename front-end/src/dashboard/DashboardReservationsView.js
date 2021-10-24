@@ -1,10 +1,11 @@
 import React from "react";
 import { useRouteMatch } from "react-router";
+//path.includes("seat") ? null : 
 
 
 export default function DashboardReservationsView({reservations}){
-  const { path } = useRouteMatch();
-   const displayReservations = reservations.map(({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, status}) => {
+  
+   const displayReservations = reservations.map(({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => {
     
         return (
             <tr>
@@ -14,6 +15,7 @@ export default function DashboardReservationsView({reservations}){
                 <td>{mobile_number}</td>
                 <td>{reservation_date}</td>
                 <td>{reservation_time}</td>
+                <td>{people}</td>
                 <td>{status}</td>
                 <td>{status ===
                 "seated" ? null : (
@@ -25,7 +27,6 @@ export default function DashboardReservationsView({reservations}){
                     Seat
                   </a>
                   </>)}</td>
-
             </tr>)
 })
 
@@ -41,6 +42,7 @@ export default function DashboardReservationsView({reservations}){
       <th scope="col">Mobile Number</th>
       <th scope="col">Date</th>
       <th scope="col">Time</th>
+      <th scope="col">People</th>
       <th scope="col">Status</th>
       <th scope="col"></th>
     </tr>

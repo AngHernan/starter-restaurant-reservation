@@ -1,3 +1,4 @@
+
 const knex = require("../db/connection");
 
 function list(){
@@ -55,7 +56,6 @@ function reservationUpdate(updatedReservation){
         .update(updatedReservation)
         .returning("*")
 }
-
 
     module.exports = {
     list,

@@ -50,7 +50,6 @@ async function unseat(req, res, next){
                                         Functions bellow
 */}
 
-
 function hasName(req, res, next){
   const {data: {table_name} = {}} = req.body;
   if(table_name){

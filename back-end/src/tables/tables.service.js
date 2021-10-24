@@ -22,7 +22,6 @@ function seatRes(table_id, reservation_id) {
         .where({"reservation_id": reservation_id })
         .update({ status: "seated" })
         .transacting(transaction);
-
       return knex("tables")
         .where({ "table_id": table_id })
         .update({
@@ -38,7 +37,6 @@ function seatRes(table_id, reservation_id) {
             .select("*")
             .where({"table_id": table_id})
             .update({ reservation_id: reservation_id, occupied: true })
-          
       };
 
     function unseat(table_id){
