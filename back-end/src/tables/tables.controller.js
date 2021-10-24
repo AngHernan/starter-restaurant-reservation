@@ -26,6 +26,14 @@ async function update(req, res, next){
   res.status(200).json({updated});
 };
 
+async function seat(req, res, next){
+  const table_id = req.params.table_id;
+  const reservation_id = req.body.data.reservation_id;
+  updated = await service.seatRes(table_id, reservation_id);
+
+  res.status(200).json({updated});
+};
+
 async function unseat(req, res, next){
   const table = res.locals.table;
   const reservation_id = table.reservation_id;
@@ -135,7 +143,7 @@ module.exports = {
       asyncErrorBoundary(tableExists),
       hasCap,
       isOccupied,
-      asyncErrorBoundary(update),
+      asyncErrorBoundary(seat),
     ],
 
     unseat: [

@@ -16,10 +16,10 @@ function findRes(reservation_id){
     return knex("reservations").select("reservations.*").where({"reservation_id": reservation_id}).first();
 }
 
-function seat(table_id, reservation_id) {
+function seatRes(table_id, reservation_id) {
     return knex.transaction(async (transaction) => {
       await knex("reservations")
-        .where({"id": reservation_id })
+        .where({"reservation_id": reservation_id })
         .update({ status: "seated" })
         .transacting(transaction);
 
@@ -54,5 +54,6 @@ module.exports = {
     read,
     findRes,
     update,
+    seatRes,
     unseat,
 }
