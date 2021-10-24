@@ -65,3 +65,16 @@ export function validateReservation(reservation, errors){
 
     return true;
 }
+
+export function validateSeating(table, people, errors){
+
+    
+    console.log("seat validation function:", table, people)
+
+
+    if(errors.messages.length > 0){
+        return false;
+    }
+
+    return true;
+}

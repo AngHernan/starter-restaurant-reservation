@@ -157,11 +157,13 @@ function peopleNan(req, res, next){
 function notPast(req, res, next){ 
   const date = res.locals.reservation_date;
 
-  const current = new Date()
+  let current = new Date()
+  const utcCurrent = new Date(current.toUTCString());
 
   let valid = new Date(date)
-
-  if(current.toUTCString() < valid.toUTCString()){
+  const utcValid = new Date(valid.toUTCString());
+  
+  if( utcCurrent < utcValid){
     return next();
   }
   next({status:400, message: `reservation must be in the future`});
