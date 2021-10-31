@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router";
 import { listTables, updateTableStatus, readReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import { validateSeating } from "../utils/validations";
+import { today } from "../utils/date-time";
+
 
 export default function SeatReservation(){
     const history = useHistory();
+    const {reservation_id} = useParams();
+    const [selectedTableID, setSelectedTableID] = useState(null);
+
+
     const [tables, setTables] = useState([]);
-    const [tablesError, setTablesError] = useState(null);
+    const [tablesError, setTablesError] = useState("");
     
     const [currentReservation, setCurrentReservation] = useState({});
     const [currentReservationError, setCurrentReservationError] = useState(null);
-
-    const [seatReservationError, setSeatReservationError] = useState(null);
-    const [errors, setErrors] = useState({"messages":[]});
-    const {reservation_id} = useParams();
-
-
-
-    const [selectedTable, setSelectedTable] = useState(1);
-
+ 
     useEffect(loadTables, []);
     useEffect(loadReservation, [reservation_id]);
-    
+
     function loadTables(){
             const abortController = new AbortController();
             setTablesError(null);
             listTables(abortController.signal)
-                .then(setTables)
+                .then((tables) => {
+                setTables(tables);
+                setSelectedTableID(tables[0].table_id);
+              })
                 .catch(setTablesError)
             return () => abortController.abort();
             }
@@ -41,45 +41,37 @@ export default function SeatReservation(){
         return () => abortController.abort();
         }
 
-        async function handleChange({ target }) {
-            console.log(target.value,target)
-            setSelectedTable(target.value);
+    function handleChange({ target }) {
+            setSelectedTableID(target.value);
           }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const found = tables.find((table) => table.table_id === 4)
-        console.log("Seat reservation module:", tables, found)
-        console.log("this is the seat we need", selectedTable)
-        
-        const validated = false;
-        if(!validated){
-            console.log(validated)
-            console.log(errors.messages.join(' '))
-            console.log(errors.messages)
-            setErrors({...errors})
-            return errors.messages;
-        }
-       
         const abortController = new AbortController();
+        setTablesError(null);
+        let foundTable = tables.find((table) => table.table_id === Number(selectedTableID));
 
-        const id = { data: { reservation_id: reservation_id } }
-        updateTableStatus(selectedTable, id, 'PUT', abortController.signal)
-            .then(() => history.push(`/dashboard`))
-            .catch(setSeatReservationError)
-        return () => {
-                abortController.abort();
-            }
+        if(currentReservation.people > foundTable.capacity) {//TO PASS TEST CODE, ORIGINALLY WAS A WINDOW ALERT 
+            setTablesError({message: "Party size is greater then table capacity, choose another table."})
+            return
+        }
+        updateTableStatus(selectedTableID, { data: { reservation_id } }, 'PUT', abortController.signal)
+            .then(() => {history.push({
+                pathname: "/dashboard",
+                search:`?date=${currentReservation.reservation_date}`})
+             })
+            .catch(setTablesError)
+        return () => abortController.abort();
         }
 
-    const tableOptions = tables.map((table) => {
-        return  (<option key={table.table_id} value={table.table_id}>{table.table_name} - {table.capacity} </option>)
-    })
-
-    const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
+    const tableOptions = tables.map((table) => (
+        <option key={Number(table.table_id)} value={Number(table.table_id)}>
+          {table.table_name} - {table.capacity}
+        </option>)
+    )
 
     return (
-    <fragment> 
+    <> 
         <div className="container p-3 my-2 bg-dark text-white">
             <div className="row m-5 justify-content-center">
             <div className="col-4.5  p-3 bg-dark text-white">
@@ -101,41 +93,39 @@ export default function SeatReservation(){
                 <div className="row justify-content-center"><h4>Phone #: </h4></div>
                 <div className="row justify-content-center"><h4>{currentReservation.mobile_number}</h4></div>
             </div>
-         </div>
-
+        </div>
         
-        <ErrorAlert error={currentReservationError} />
         
         </div>
         <div className="container p-3 my-2 bg-dark text-white">
-        <div className="row mb-2 justify-content-center">
-            <div className="col-2.5 p-3 bg-dark text-white">
+            <div className="row mb-2 justify-content-center">
+                <div className="col-2.5 p-3 bg-dark text-white">
                 <h2>Select Table </h2>
+                </div>
+            </div>
+        
+            <div className="row justify-content-center">
+            
+                <div className="col-4.5 m-2 p-3 border border-primary bg-dark text-white">
+                    <form>
+                    <label className="">Table#</label>
+                    <select name="table_id" onChange={handleChange} value={selectedTableID} className="form-select form-select-lg mb-2" >
+                        {tableOptions}
+                    </select>
+                    </form>
+                </div>
+            </div>
+            <div className="row justify-content-center">
+                <div className="col-1 p-2 bg-dark text-white">    
+                    <button type="submit" onClick={handleSubmit}  className="btn btn-outline-primary">Confirm</button>
+                </div>
+                <div className="col-1 p-2 bg-dark text-white">
+                    <button type="cancel" onClick={()=> history.push(`/dashboard?date=${today()}`)}  className="btn btn-outline-danger mb-1">Cancel</button>
+                </div>
             </div>
         </div>
         <ErrorAlert error={tablesError} />
-        {errors.messages.length? <div className="alert alert-danger" role="alert">
-  {errorDisplay}</div>: <div></div>}
-            <ErrorAlert error={seatReservationError} />
-        <div className="row justify-content-center">
-            
-        <div className="col-4.5 m-2 p-3 border border-primary bg-dark text-white">
-            <label for="table">Table Number : </label>
-            <select name="table_id" onChange={handleChange} class="form-select form-select-lg mb-2" aria-label="table">
-                {tableOptions}
-            </select>
-            
-            </div>
-            </div>
-            <div className="row justify-content-center">
-            <div className="col-1 p-2 bg-dark text-white">
-            <button type="submit" onClick={handleSubmit}  className="btn btn-outline-primary">Confirm</button>
-            </div>
-            <div className="col-1 p-2 bg-dark text-white">
-            <button type="cancel" onClick={()=> history.goBack()}  className="btn btn-outline-danger mb-1">Cancel</button>
-        </div>
-        </div>
-        </div>
-    </fragment>
+        <ErrorAlert error={currentReservationError} />
+    </>
         )
 }

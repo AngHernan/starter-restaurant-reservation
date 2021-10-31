@@ -13,27 +13,16 @@ export default function CreateTable(){
 
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         const abortController = new AbortController();
-        console.log("before submitting",newTable);
+
         event.preventDefault();
-        async function callCreateTable(){
-            try {
-                const table = {
-                    ...newTable,
-                    capacity: Number(newTable.capacity),
-                };
-                await createTable({data: table}, abortController.signal);
-                history.replace(`/dashboard`);
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    console.info('Aboorted');
-                } else {
-                    throw err;
-                };
+        const table = {
+                ...newTable,
+                capacity: Number(newTable.capacity),
             };
-        };
-        callCreateTable();
+        await createTable({data: table}, abortController.signal)
+            .then(() => {history.replace(`/dashboard`)})
     
         return () => {
             abortController.abort();

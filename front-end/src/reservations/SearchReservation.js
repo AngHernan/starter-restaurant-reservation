@@ -5,52 +5,61 @@ import DashboardReservationsView from "../dashboard/DashboardReservationsView";
 
 export default function SearchReservation(){
 
-    const [foundReservation, setFoundReservations] = useState([]);
+    const [foundReservations, setFoundReservations] = useState([]);
     const [foundReservationError, setFoundReservationError] = useState(null);
 
+    const [notFound, setNotFound] = useState(false);
+
+    function handleChange({ target }) {
+        setNotFound(false)
+      }
+
     const handleSubmit = (event) => {
+        event.preventDefault();
+        setFoundReservations([]);
         const mobile_number = document.getElementById('mobile_number').value
         const abortController = new AbortController();
-        event.preventDefault();
-       
-       async function callListReservation() {
-           try{
-                await listReservations({ mobile_number }, abortController.signal)
-                    .then(setFoundReservations)
-                    .then(console.log("Within Search Component",foundReservation))
-                    .catch(setFoundReservationError);
-                } catch (err) {
-                    if (err.name === "AbortError") {
-                        console.log("Aborted");
-                    } else {
-                        setFoundReservationError(err);
-                        throw err;
-                    };
-                };
-            };
-            callListReservation();
-    
-            return () => {
-                abortController.abort();
-            }
-        }
+        
+        listReservations({mobile_number}, abortController.signal)
+            .then((response) => {
+                if(response.length){
+                    setFoundReservations(response)
+                } else setNotFound(true)
+            })
+            .catch(setFoundReservationError)
 
-    const reservationDisplay = foundReservation.map((reservation) => DashboardReservationsView({...reservation}))
-    const NotFound = (<b>Reservation not found!</b>)
+        return () => abortController.abort();
+    }
+
+    const NotFound = (<b>No reservations found</b>)
+    
     return (
         <>
-        <div>
-            <h2>Search for Reservation</h2>
+        <div className="container p-3 my-2 bg-dark text-white">
+            <div className="row m-5 justify-content-center">
+            <div className="col-4.5  p-3 bg-dark text-white">
+                <h1 className="m-3">Search for a Reservation</h1>
+            </div>
+           
         </div>
-        <form>
-        <input type="text" id='mobile_number' name="mobile_number" placeholder= "Enter a customer's phone number"/> 
-        <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
-        </form>
+            
+        </div>
         <ErrorAlert error={foundReservationError} />
+        <div className="container border border-primary bg-white text-white">
+            <div className="row justify-content-center p-2">
+                <div className="col-6">
+                    <input type="text" className="form-control form-control" id='mobile_number' name="mobile_number" onChange={handleChange} placeholder="Enter a customer's phone number"/> 
+                </div>
+                <div className="col-2">
+                    <button type="submit" onClick={handleSubmit} className="btn btn-outline-primary">Submit</button>
+                </div>
+            </div>
+        </div>
         <div>
             <h6>
-                {foundReservation? reservationDisplay : NotFound}
+                {foundReservations.length? <DashboardReservationsView reservations={foundReservations}/>: null}
             </h6>
+            {notFound? NotFound : null}
         </div>
         </>
         )
