@@ -1,37 +1,68 @@
-import React from "react";
-import { useRouteMatch } from "react-router";
-//path.includes("seat") ? null : 
+import React, {useState} from "react";
+import { updateReservationStatus } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 
-export default function DashboardReservationsView({reservations}){
-  
-   const displayReservations = reservations.map(({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => {
-    
+export default function DashboardReservationsView({reservations, loadDashboard}){
+  const [cancelReservationError, setCancelReservationError] = useState(null);
+
+  const handleCanceled = async (reservation_id) => {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      const abortController = new AbortController();
+      setCancelReservationError(null);
+      await updateReservationStatus(reservation_id, {data: { status: "cancelled" } }, abortController.signal)
+        .then(loadDashboard)
+        .catch(setCancelReservationError);
+      return () => abortController.abort();
+    }
+  };
+
+   const displayReservations = reservations.map((reservation, index) => {
+        
         return (
-            <tr>
-                <th scope="row">{reservation_id}</th>
-                <td>{first_name}</td>
-                <td>{last_name}</td>
-                <td>{mobile_number}</td>
-                <td>{reservation_date}</td>
-                <td>{reservation_time}</td>
-                <td>{people}</td>
-                <td>{status}</td>
-                <td>{status ===
-                "seated" ? null : (
+            <tr key={index}>
+                <th scope="row">{reservation.reservation_id}</th>
+                <td>{reservation.first_name}</td>
+                <td>{reservation.last_name}</td>
+                <td>{reservation.mobile_number}</td>
+                <td>{reservation.reservation_date}</td>
+                <td>{reservation.reservation_time}</td>
+                <td>{reservation.people}</td>
+                <td><p data-reservation-id-status={reservation.reservation_id}>{reservation.status}</p></td>
+                <td>{reservation.status !== "booked"? null : (
                 <>
                   <a
-                    href={`/reservations/${reservation_id}/seat`}
-                    className="btn btn-outline-primary"
+                    href={`/reservations/${reservation.reservation_id}/seat`}
+                    className="btn btn-outline-primary mx-1"
                   >
                     Seat
                   </a>
+                  </>)}{reservation.status !== "booked" ? null : (
+                <>
+                  <a
+                    href={`/reservations/${reservation.reservation_id}/edit`}
+                    className="btn btn-outline-primary mx-1"
+                  >
+                    Edit
+                  </a>
+                  </>)}{reservation.status !== "booked" ? null :(
+                <>
+                  <button data-reservation-id-cancel={reservation.reservation_id} onClick={() => handleCanceled(reservation.reservation_id)} className="btn btn-outline-danger ml-1"
+                  >
+                    Cancel
+                  </button>
                   </>)}</td>
+                  
             </tr>)
 })
 
 
         return (<>
+        <ErrorAlert error={cancelReservationError} />
             <table className="table caption-top">
   <caption>Reservations</caption>
   <thead>

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { listReservations, listTables} from "../utils/api";
 import {previous, today, next} from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservationsView from "./DashboardReservationsView"
 import DashboardTablesView from "./DashboardTablesView"
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import queryString from "query-string"
-
 
 
 /**
@@ -16,42 +15,44 @@ import queryString from "query-string"
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+
+
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
-  const [tables, setTables] = useState([]);
-  const [tablesError, setTablesError] = useState(null);
+ 
 
   const [dateOfReservations, setDateOfReservations] = useState(date);
 
   const {search} = useLocation();
   const searchDate = queryString.parse(search).date;
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
 
-  console.log(searchDate)
-
+  useEffect(loadTables,[]);
   useEffect(loadDashboard, [search, dateOfReservations, date, searchDate]);
   useEffect(resetDate, [search, date]);
-  useEffect(loadTables,[]);
+  
+
+  
 
   function loadTables() {
-    const abortController = new AbortController();
-    setTablesError(null);
-    listTables(abortController.signal)
-      .then(setTables)
-      .catch(setTablesError)
-        
-    return () => abortController.abort();
-  }
+      const abortController = new AbortController();
+      setTablesError(null);
+      listTables(abortController.signal)
+        .then(setTables)
+        .catch(setTablesError)
+          
+      return () => abortController.abort();
+    }
 
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
 
     if (searchDate) {
-    setDateOfReservations(searchDate);
-    listReservations({date: searchDate}, abortController.signal) 
-      .then(setReservations)
-      .catch(setReservationsError)
+    setDateOfReservations(searchDate.slice(0,10));
+    listReservations({date: searchDate}, abortController.signal).then(setReservations).catch(setReservationsError)
       } else {
     setDateOfReservations(date)
     listReservations({date}, abortController.signal)
@@ -68,12 +69,14 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+
+
   return (
 
     <main>
       <div className="container p-3 my-2 bg-secondary text-white">
         <div className="row justify-content-center">
-          <div className="col-6 border border-primary p-3 mb-2 bg-dark text-white">
+          <div className="col-5.5 border border-primary p-3 mb-2 bg-dark text-white">
             <h1 className="m-3 pl-3">Reservations Dashboard</h1>
           </div>
         </div>
@@ -100,13 +103,11 @@ function Dashboard({ date }) {
           </div>
         </div>
       </div>
+      <ErrorAlert error={tablesError} />
       <ErrorAlert error={reservationsError} />
       <div>
-      <DashboardReservationsView reservations={reservations} />
-     </div>
-     <ErrorAlert error={tablesError} />
-     <div>
-     <DashboardTablesView tables={tables}/>
+      <DashboardReservationsView reservations={reservations} loadDashboard={loadDashboard}/>
+     <DashboardTablesView tables={tables} loadDashboard={loadDashboard} loadTables={loadTables}/>
     </div>
     </main>
   );
