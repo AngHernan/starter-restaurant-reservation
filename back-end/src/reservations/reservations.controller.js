@@ -115,6 +115,7 @@ function validDate(req, res, next){
 function hasReservationDate(req, res, next){
   const {data: {reservation_date} = {}} = req.body;
   if(reservation_date){
+    const check = new Date(reservation_date)
     res.locals.reservation_date = reservation_date;
     return next();
   }
@@ -134,7 +135,7 @@ function hasReservationTime(req, res, next){
 
     return next();
   }
-  next({status: 400, message: "reservation_time isn't valid"});
+  next({status: 400, message: `reservation_time isn't valid ${reservation_time}`});
 }
 
 function hasPeople(req, res, next){
@@ -156,17 +157,20 @@ function peopleNan(req, res, next){
 
 function notPast(req, res, next){ 
   const date = res.locals.reservation_date;
+  const time = res.locals.reservation_time;
 
+  
   let current = new Date()
   const utcCurrent = new Date(current.toUTCString());
 
-  let valid = new Date(date)
+  let checkDate = date + ' ' + time;
+  const valid = new Date(checkDate)
   const utcValid = new Date(valid.toUTCString());
   
   if( utcCurrent < utcValid){
     return next();
   }
-  next({status:400, message: `reservation must be in the future`});
+  next({status:400, message: `reservation must be in the future `});
   }
 
 
@@ -182,7 +186,6 @@ function notTues(req, res, next){
 
 function validTime(req, res, next){
   const resTime = res.locals.reservation_time;
-
   if(resTime < "10:30"){
     return next({status: 400, message: "Pick a later time"});
   }
@@ -195,7 +198,6 @@ function validTime(req, res, next){
 async function resTaken(req, res, next){
   const resTime = res.locals.reservation_time;
   const resDate = res.locals.reservation_date;
-
   const taken = await service.resTaken(resDate, resTime);
   if(taken){
     return next();
@@ -205,7 +207,7 @@ async function resTaken(req, res, next){
 
 function resCheck(req, res, next){
   const reservation = res.locals.reservation;
-  if(reservation.status === 'finished') return next({status:400, message: `a finished reservation cannot be updated`})
+  if(reservation.status === 'finished' || reservation.status === 'cancelled') return next({status:400, message: `a finished reservation cannot be updated`})
   next();
 }
 

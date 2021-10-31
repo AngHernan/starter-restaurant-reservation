@@ -39,8 +39,7 @@ async function unseat(req, res, next){
   const reservation_id = table.reservation_id;
   if(table.occupied === false) return next({status: 400, message: `table is not occupied`})
   
-  await reservationService.statusUpdate(reservation_id, "finished");
-  updated = await service.unseat(table.table_id)
+  updated = await service.unseat(table.table_id, reservation_id)
 
   res.status(200).json({updated});
 }

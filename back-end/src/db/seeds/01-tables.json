@@ -1,23 +1,16 @@
-[
-    {
+[{
         "table_name": "Bar #1",
-        "capacity": 2,
-        "occupied": false
+        "capacity": 1
     },
     {
         "table_name": "Bar #2",
-
-        "capacity": 2,
-        "occupied": false
+        "capacity": 1
     },   
     { 
         "table_name": "#1", 
-        "capacity": 6,
-        "occupied": false
+        "capacity": 6
     },
     {
         "table_name": "#2",
-        "capacity": 6,
-        "occupied": false
-    }
-]
+        "capacity": 6
+}]

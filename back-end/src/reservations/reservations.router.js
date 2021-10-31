@@ -16,6 +16,6 @@ router.route("/:reservation_id")
     .put(controller.updateReservation)
 
 router.route("/:reservation_id/status")
-   .put(controller.changeStatus)
+    .put(controller.changeStatus)
 
 module.exports = router;

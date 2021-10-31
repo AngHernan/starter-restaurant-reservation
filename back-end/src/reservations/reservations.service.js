@@ -3,7 +3,7 @@ const knex = require("../db/connection");
 
 function list(){
     return knex("reservations")
-        .select("*")
+        .select("*")    
 }
 
 function search(mobile_number) {
@@ -31,6 +31,7 @@ function read(reservation_id){
 function readDate(date){
     return knex("reservations")
         .whereNot({"status": "finished"})
+        .whereNot({"status": "cancelled"})
         .orderBy('reservation_time')
         .distinct("reservations.*")
         .where({"reservation_date": date})
