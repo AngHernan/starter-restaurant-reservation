@@ -9,31 +9,16 @@ export function validateReservation(reservation, errors){
         people,
     } = reservation;
     const current = new Date();
-    let currentDate = new Date(current.toUTCString())
+    let currentDate = new Date(current.toUTCString());
+    const checkDate = reservation_date + ' ' + reservation_time;
 
-    const valid = new Date(reservation_date);
+    const valid = new Date(checkDate);
+
     if (!valid) errors.messages.push("not valid date");
 
     let validDate = new Date(valid.toUTCString())
 
-    console.log(reservation)
-    console.log(first_name)
-    console.log("checkking name",first_name === "")
-    console.log("CHECKING VALIDATION:",valid)
 
-    console.log("########################################")
-    console.log("current:", current.toUTCString())
-    
-    console.log(currentDate)
-    console.log("########################################")
-    console.log("Valid utc:", valid.toUTCString())
-    
-    console.log(validDate)
-
-    console.log("########################################")
-    console.log(validDate < currentDate)
- 
-    console.log("########################################")
 
     if(!first_name) errors.messages.push("Missing first name")
     if(!last_name) errors.messages.push("Missing last name")
@@ -50,7 +35,7 @@ export function validateReservation(reservation, errors){
         errors.messages.push('Date must be in the future') 
     
     }
-    if(valid.getDay() === 1){
+    if(valid.getDay() === 2){
         errors.messages.push('closed on tuesdays')
     }
     if(reservation_time < "10:30"){
@@ -68,9 +53,15 @@ export function validateReservation(reservation, errors){
 
 export function validateSeating(table, people, errors){
 
-    
-    console.log("seat validation function:", table, people)
+    console.log("here:", table)
 
+    if(table.occupied === true){
+        errors.messages.push('Table is occupied')
+    }
+
+    if(table.capacity < people){
+        errors.messages.push('Table capacity not large enough')
+    }
 
     if(errors.messages.length > 0){
         return false;

@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import NotFound from "../layout/NotFound";
 import CreateReservation from "./CreateReservations";
 import SeatReservation from "./SeatReservation";
-import UpdateReservation from "./UpdateReservation"
+import EditReservation from "./EditReservation"
 
 export default function ReservationRoutes() {
     return (
@@ -16,8 +16,8 @@ export default function ReservationRoutes() {
         <Route exact={true} path={`/reservations/:reservation_id/seat`}>
             <SeatReservation />
         </Route>
-        <Route exact={true} path={`/reservations/:reservation_id/status`}>
-            <UpdateReservation />
+        <Route exact={true} path={`/reservations/:reservation_id/edit`}>
+            <EditReservation />
         </Route>
       <Route>
         <NotFound />

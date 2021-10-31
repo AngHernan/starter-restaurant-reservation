@@ -17,53 +17,27 @@ export default function CreateReservation(){
         
     }
 
-    const handleSubmit = (event) => {
-        
+    const handleSubmit = async (event) => {
         const abortController = new AbortController();
-        
         event.preventDefault();
-        
-        console.log("before submitting", newReservation);
-        console.log("date", newReservation.reservation_date);
-
-        const valid = Date(newReservation.reservation_date);
-        console.log(valid)
-
-        console.log(newReservation, errors)
-
         const validated = validateReservation(newReservation, errors);
 
         if(!validated){
-            console.log(validated)
-            console.log(errors.messages.join(' '))
-            console.log(errors.messages)
             setErrors({...errors})
             return errors.messages;
         }
-       
-        async function callCreateReservation(){
-            try {
-                const reservation = {
-                    ...newReservation,
-                    people: Number(newReservation.people),
-                }
-
-                await createReservation({data: reservation}, abortController.signal);
-
-                history.replace(`/dashboard?date=${reservation.reservation_date}`)
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    console.info('Aboorted');
-                } else {
-                    throw err;
-                };
-            };
-        };
-        callCreateReservation();
-    
-        return () => {
-            abortController.abort();
+        const reservation = {
+            ...newReservation,
+            people: Number(newReservation.people),
         }
+
+        await createReservation({data: reservation}, abortController.signal)
+            .then(() => history.replace(`/dashboard?date=${reservation.reservation_date}`))
+            .catch(setErrors)
+
+        return () => 
+            abortController.abort();
+
     }
     
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
