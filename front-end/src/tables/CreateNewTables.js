@@ -29,7 +29,15 @@ export default function CreateTable(){
         };
     };
     
-    return (
+    return (<>
+      <div className="container p-3 my-2 bg-dark text-white">
+            <div className="row m-5 justify-content-center">
+            <div className="col-4.5  p-3 bg-dark text-white">
+                <h1 className="m-3">Create a Table</h1>
+            </div>
+           </div>
+        </div>
+        <div className="container p-3 my-2">    
         <form>
             <div className="mb-3">
                 <label for="table_name" className="form-label">Table Name:</label>
@@ -42,5 +50,7 @@ export default function CreateTable(){
             <button onClick={() => history.goBack()} type="button" className="buttonSpace btn btn-secondary">Cancel</button>
             <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
         </form>
+        </div>
+    </>
     )
 }

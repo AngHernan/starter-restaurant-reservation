@@ -13,18 +13,12 @@ async function list(req, res) {
   }
 
 async function create(req, res){
-  const data = await service.create(req.body.data);
+  let value;
+  if(req.body.data.reservation_id){value = true}
+  const data = await service.create({...req.body.data, occupied: value});
   res.status(201).json({ data });
 }
 
-async function update(req, res, next){
-  const table_id = req.params.table_id;
-  const reservation_id = req.body.data.reservation_id;
-  updated = await service.update(table_id, reservation_id);
-  await reservationService.statusUpdate(reservation_id, "seated");
-
-  res.status(200).json({updated});
-};
 
 async function seat(req, res, next){
   const table_id = req.params.table_id;
@@ -37,7 +31,7 @@ async function seat(req, res, next){
 async function unseat(req, res, next){
   const table = res.locals.table;
   const reservation_id = table.reservation_id;
-  if(table.occupied === false) return next({status: 400, message: `table is not occupied`})
+  if(!table.occupied || !table.reservation_id) return next({status: 400, message: `table is not occupied`})
   
   updated = await service.unseat(table.table_id, reservation_id)
 

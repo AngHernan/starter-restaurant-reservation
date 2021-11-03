@@ -26,7 +26,7 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
     const displayTables = tables.sort().map((table, index) =>  {    
         return( <>
             {table.occupied || table.reservation_id?
-                <tr key={table.table_id}>
+                <tr key={index}>
                     <th scope="row">{table.table_id}</th>
                     <td>{table.table_name}</td>
                     <td>{table.capacity}</td>
@@ -34,7 +34,7 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
                     <td><p data-table-id-status={table.table_id}>Occupied</p></td>
                     <td><button data-table-id-finish={table.table_id} className="btn btn-outline-primary" onClick={() => handleFinished(table.table_id)}>Finish</button></td>
                 </tr> : 
-                  <tr key={table.table_id}>
+                  <tr key={index}>
                   <th scope="row">{table.table_id}</th>
                   <td>{table.table_name}</td>
                   <td>{table.capacity}</td>
@@ -44,13 +44,11 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
                 </>
                 )})
 
+            
     return (
         <>
          
             <ErrorAlert error={finishTableError} />
-            <div>
-            
-                </div>
                 <div>
                 <table className="table align-middle">
                 <caption>Tables</caption>

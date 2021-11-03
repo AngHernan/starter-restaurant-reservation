@@ -67,13 +67,12 @@ export async function listReservations(params, signal) {
   const fetched = await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
-  console.log(fetched)
+
   return fetched;
 }
 
 export async function readReservation(reservation_id, signal){
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
-  console.log(url)
   return await fetchJson(url, {headers, signal}, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
@@ -94,7 +93,7 @@ export async function updateReservationStatus(reservation_id, status, signal) {
   };
   console.log(url, options)
   const response = await fetchJson(url, options, {});
-  console.log("This was the response: ",response)
+  console.log("This was the response: ", response)
   return response;
 };
 
@@ -141,6 +140,7 @@ export async function createReservation(reservation, signal) {
     signal,
   };
   
+  console.log(url, options)
   return await fetchJson(url, options, {});
 }
 

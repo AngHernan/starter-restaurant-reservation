@@ -105,7 +105,8 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={tablesError} />
       <ErrorAlert error={reservationsError} />
-      <div>
+      <div className="container p-3 my-2">    
+
       <DashboardReservationsView reservations={reservations} loadDashboard={loadDashboard}/>
      <DashboardTablesView tables={tables} loadDashboard={loadDashboard} loadTables={loadTables}/>
     </div>
