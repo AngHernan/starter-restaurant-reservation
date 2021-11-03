@@ -67,27 +67,27 @@ export default function EditReservation(){
             {errors.messages.length? <div className="alert alert-danger" role="alert">
   {errorDisplay}</div>: <div></div>}
             <div className="mb-3">
-                <label for="first_name" className="form-label">First Name:</label> 
+                <label htmlFor="first_name" className="form-label">First Name:</label> 
                 <input type="text" className="form-control" name="first_name" id="first_name" value={currentReservation?.first_name} onChange={handleChange} />
             </div>
             <div className="mb-3">
-                <label for="last_name" className="form-label">Last Name:</label>
+                <label htmlFor="last_name" className="form-label">Last Name:</label>
                 <input type="text" className="form-control" name="last_name" id="last_name" placeholder="Last Name" value={currentReservation?.last_name} onChange={handleChange}/>
             </div>
             <div className="mb-3">
-                <label for="mobile_number" className="form-label">Mobile Number:</label>
+                <label htmlFor="mobile_number" className="form-label">Mobile Number:</label>
                 <input type="tel" className="form-control" name="mobile_number" id="mobile_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="xxx-xxx-xxxx" value={currentReservation?.mobile_number} onChange={handleChange} required/>
             </div>
             <div className="mb-3">
-                <label for="reservation_date" className="form-label">Date of reservation:</label>
+                <label htmlFor="reservation_date" className="form-label">Date of reservation:</label>
                 <input type="date" className="form-control" name="reservation_date" id="reservation_date" placeholder="Date of Reservation" value={currentReservation?.reservation_date} onChange={handleChange}/>
             </div>
             <div className="mb-3">
-                <label for="reservation_time" className="form-label">Time of reservation:</label>
+                <label htmlFor="reservation_time" className="form-label">Time of reservation:</label>
                 <input type="time" className="form-control" name="reservation_time" id="reservation_time" placeholder="Time of Reservation" value={currentReservation?.reservation_time} onChange={handleChange}/>
             </div>
             <div className="mb-3">
-                <label for="people" className="form-label">Number of people:</label>
+                <label htmlFor="people" className="form-label">Number of people:</label>
                 <input type="number" min="1" pattern="\d+" className="form-control" name="people" id="people" placeholder='10' value={currentReservation?.people} onChange={handleChange}/>
             </div>
             <button onClick={() => history.goBack()} type="cancel" className="buttonSpace btn btn-outline-secondary">Cancel</button>
