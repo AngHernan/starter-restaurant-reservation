@@ -1,4 +1,29 @@
-# Capstone: Restaurant Reservation System
+Capstone: Restaurant Reservation System
+
+[Link to live Preview](https://restaurant-resang-client.herokuapp.com/dashboard?date=2021-11-05)
+
+This application is a fully functioning reservation system with multiple levels of validations and features to manage reservation and table information for a restaurant. 
+
+Users are able to view reservations on the Dashboard for the current day or selected day. Previous, Today, and next days allows the users to change between dates to see different reservations. Reservations can be seated, edited, and canceled. These buttons or conditions to render upon the status of the reservation.
+
+Tables are also listed below the reservations on the Dashboard so users can manage seating for the restaurant. Finish buttons will render for tables that are currently occupied. The seated reservations will show a "seated" status and can be deleted or "finished" by pressing the finish button. Once pressed the dashboard is re-rendered with the reservation deleted from the table and the table set to a status of "free". 
+
+Reservations can be searched by phone number and once searched the reservations current information will be shown. Depending on the status of the reservation the buttons for seating, editing, and canceling with render. 
+
+Reservations and tables can be created. Reservations are validated on the frontend side as well as the backend. 
+
+Screenshots and more features coming soon.
+
+Running locally:
+1. Fork and clone this repository.
+1. Run `cp ./back-end/.env.sample ./back-end/.env`.
+1. Update the `./back-end/.env` file with the connection URL's to your ElephantSQL database instance.
+1. Run `cp ./front-end/.env.sample ./front-end/.env`.
+1. You should not need to make changes to the `./front-end/.env` file unless you want to connect to a backend at a location other than `http://localhost:5000`.
+1. Run `npm install` to install project dependencies.
+1. Run `npm run start:dev` to start your server in development mode.
+
+Project Prompt:
 
 > You have been hired as a full stack developer at _Periodic Tables_, a startup that is creating a reservation system for fine dining restaurants.
 > The software is used only by restaurant personnel when a customer calls to request a reservation.
