@@ -14,13 +14,16 @@ export function validateReservation(reservation, errors){
     const valid = new Date(resDate.toString());
     const validUTC = new Date(valid.toUTCString());
 
-    if (!valid) errors.messages.push("not valid date");
     if(!first_name) errors.messages.push("Missing first name");
     if(!last_name) errors.messages.push("Missing last name");
     if(!mobile_number) errors.messages.push("Missing mobile number");
     if(!reservation_time) errors.messages.push("Missing time");
     if(!reservation_date)errors.messages.push("Missing date");
     if(!people) errors.messages.push("Missing paty size");
+
+    if(Date.parse(reservation_date) === NaN){
+        errors.messages.push('Date is not valid'); 
+    };
 
     if(validUTC < current){
         errors.messages.push('Date must be in the future'); 
