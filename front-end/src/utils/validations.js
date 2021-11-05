@@ -8,20 +8,10 @@ export function validateReservation(reservation, errors){
         reservation_date,
         people,
     } = reservation;  
+
     const current = new Date();
-    const currentUtc = current.toUTCString();
-
     const valid = new Date(`${reservation_date} ${reservation_time}`);
-    const validUTC = valid.toUTCString();
-
-
-    console.log(current)
-    console.log(current.toUTCString())
-    console.log(valid)
-    console.log(valid.toUTCString())
-    console.log(validUTC > currentUtc)
-    console.log("*****************************")
-
+    const validUTC = new Date(valid.toUTCString());
 
     if (!valid) errors.messages.push("not valid date");
     if(!first_name) errors.messages.push("Missing first name");
@@ -35,7 +25,7 @@ export function validateReservation(reservation, errors){
         errors.messages.push('Date is not valid'); 
     };
 
-    if(validUTC < currentUtc){
+    if(validUTC < current){
         errors.messages.push('Date must be in the future'); 
     };
     if(valid.getDay() === 2){
