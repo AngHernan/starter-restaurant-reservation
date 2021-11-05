@@ -24,11 +24,10 @@ export default function CreateReservation(){
         event.preventDefault();
         const validated = validateReservation(newReservation, errors);
 
-        {/*if(!validated){
+        if(!validated){
             setErrors({...errors})
             return errors.messages;
         };
-    */}
         const reservation = {
             ...newReservation,
             people: Number(newReservation.people),

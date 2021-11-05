@@ -22,7 +22,7 @@ export function validateReservation(reservation, errors){
     if(!people) errors.messages.push("Missing paty size");
 
     if(valid.toString() === 'Invalid Date'){
-        errors.messages.push('Date is not valid'); 
+        errors.messages.push(`${reservation_date} Date is not valid`); 
     };
 
     if(validUTC < current){
