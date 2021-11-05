@@ -11,8 +11,7 @@ export function validateReservation(reservation, errors){
 
     const current = new Date();
     const resDate = `${reservation_date} ${reservation_time}`
-    const resDate2 = new Date(resDate)
-    const valid = new Date(`${reservation_date} ${reservation_time}`);
+    const valid = new Date(resDate.toString());
     const validUTC = new Date(valid.toUTCString());
 
     if (!valid) errors.messages.push("not valid date");
@@ -22,10 +21,6 @@ export function validateReservation(reservation, errors){
     if(!reservation_time) errors.messages.push("Missing time");
     if(!reservation_date)errors.messages.push("Missing date");
     if(!people) errors.messages.push("Missing paty size");
-
-    if(valid.toString() === 'Invalid Date'){
-        errors.messages.push(`${resDate} ${typeof(resDate)}||| ${resDate2} ||| ${typeof(`${reservation_date} ${reservation_time}`)}||${reservation_date} ${reservation_time} ||| ${typeof(reservation_date)} ${typeof(reservation_time)} ||| ${new Date(`${reservation_date} ${reservation_time}`)} ${valid.toString() === 'Invalid Date'} Date is not valid`); 
-    };
 
     if(validUTC < current){
         errors.messages.push('Date must be in the future'); 
