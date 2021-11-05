@@ -12,6 +12,11 @@ Reservations can be searched by phone number and once searched the reservations 
 
 Reservations and tables can be created. Reservations are validated on the frontend side as well as the backend. 
 
+React was use to develop and manage the front end UI. 
+
+Backend consists of Express.js for routing and middleware funcitons.
+The database is managed with postgresQL and Knex to run migrations, seeds, and CRUD functions. 
+
 Screenshots and more features coming soon.
 
 Running locally:
