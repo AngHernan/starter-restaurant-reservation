@@ -3,7 +3,7 @@ import { finishTable} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 
-export default function DashboardTablesView({tables, loadDashboard, loadTables}){
+export default function Tables({tables, loadDashboard, loadTables}){
     const [finishTableError, setFinishTableError] = useState(null);
   
     function handleFinished(table_id){

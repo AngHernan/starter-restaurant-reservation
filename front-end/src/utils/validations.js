@@ -1,5 +1,5 @@
 export function validateReservation(reservation, errors){
-    errors.messages = []
+    errors.messages = [];
     const {
         first_name,
         last_name,
@@ -7,65 +7,68 @@ export function validateReservation(reservation, errors){
         reservation_time,
         reservation_date,
         people,
-    } = reservation;
+    } = reservation;  
     const current = new Date();
-    let currentDate = new Date(current.toUTCString());
-    const checkDate = reservation_date + ' ' + reservation_time;
+    const currentUtc = current.toUTCString();
 
-    const valid = new Date(checkDate);
+    const valid = new Date(`${reservation_date} ${reservation_time}`);
+    const validUTC = valid.toUTCString();
+
+
+    console.log(current)
+    console.log(current.toUTCString())
+    console.log(valid)
+    console.log(valid.toUTCString())
+    console.log(validUTC > currentUtc)
+    console.log("*****************************")
+
 
     if (!valid) errors.messages.push("not valid date");
-
-    let validDate = new Date(valid.toUTCString())
-
-
-
-    if(!first_name) errors.messages.push("Missing first name")
-    if(!last_name) errors.messages.push("Missing last name")
-    if(!mobile_number) errors.messages.push("Missing mobile number")
-    if(!reservation_time) errors.messages.push("Missing time")
-    if(!reservation_date)errors.messages.push("Missing date")
-    if(!people) errors.messages.push("Missing paty size")
+    if(!first_name) errors.messages.push("Missing first name");
+    if(!last_name) errors.messages.push("Missing last name");
+    if(!mobile_number) errors.messages.push("Missing mobile number");
+    if(!reservation_time) errors.messages.push("Missing time");
+    if(!reservation_date)errors.messages.push("Missing date");
+    if(!people) errors.messages.push("Missing paty size");
 
     if(valid.toString() === 'Invalid Date'){
-        errors.messages.push('Date is not valid') 
-    
-    }
-    if(validDate < currentDate){
-        errors.messages.push('Date must be in the future') 
-    
-    }
+        errors.messages.push('Date is not valid'); 
+    };
+
+    if(validUTC < currentUtc){
+        errors.messages.push('Date must be in the future'); 
+    };
     if(valid.getDay() === 2){
-        errors.messages.push('closed on tuesdays')
-    }
+        errors.messages.push('closed on tuesdays');
+    };
     if(reservation_time < "10:30"){
         errors.messages.push('Pick a later time, we open at 10:30 AM');
       }
     if(reservation_time > "21:30"){
         errors.messages.push('Pick an earlier time, we close at 9:30 PM');
-      }
+      };
     if(errors.messages.length > 0){
         return false;
-    }
+    };
 
     return true;
 }
 
 export function validateSeating(table, people, errors){
 
-    console.log("here:", table)
+    console.log("here:", table);
 
     if(table.occupied === true){
-        errors.messages.push('Table is occupied')
-    }
+        errors.messages.push('Table is occupied');
+    };
 
     if(table.capacity < people){
-        errors.messages.push('Table capacity not large enough')
-    }
+        errors.messages.push('Table capacity not large enough');
+    };
 
     if(errors.messages.length > 0){
         return false;
-    }
+    };
 
     return true;
-}
+};

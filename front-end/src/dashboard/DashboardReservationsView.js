@@ -3,7 +3,7 @@ import { updateReservationStatus } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 
-export default function DashboardReservationsView({reservations, loadDashboard}){
+export default function Reservations({reservations, loadDashboard}){
   const [cancelReservationError, setCancelReservationError] = useState(null);
 
   const handleCanceled = async (reservation_id) => {

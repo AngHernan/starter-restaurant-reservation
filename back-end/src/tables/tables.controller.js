@@ -10,14 +10,14 @@ const reservationService = require("../reservations/reservations.service")
 async function list(req, res) {
     const data = await service.list();
     res.json({data});
-  }
+};
 
 async function create(req, res){
   let value;
   if(req.body.data.reservation_id){value = true}
   const data = await service.create({...req.body.data, occupied: value});
   res.status(201).json({ data });
-}
+};
 
 
 async function seat(req, res, next){
@@ -36,46 +36,46 @@ async function unseat(req, res, next){
   updated = await service.unseat(table.table_id, reservation_id)
 
   res.status(200).json({updated});
-}
+};
 
 {/*
   //########################################Validation########################################//
                                         Functions bellow
-*/}
+*/};
 
 function hasName(req, res, next){
   const {data: {table_name} = {}} = req.body;
   if(table_name){
     res.locals.table_name = table_name;
     return next();
-  }
+  };
   next({status: 400, message:"table_name is missing"});
-}
+};
 
 function nameValid(req, res, next){
   const table = res.locals.table_name;
   if(table.length > 1){
     return next();
-  }
+  };
   next({status: 400, message:"table_name is not valid"});
-}
+};
 
 function hascapacity(req, res, next){
   const {data: {capacity} = {}} = req.body;
   if(capacity && Number.isInteger(capacity)){
     res.locals.capacity = capacity;
     return next();
-  }
+  };
   next({status: 400, message:"capacity is missing"});
-}
+};
 
 function hasReservId(req, res, next){
   const {data: {reservation_id} = {}} = req.body;
   //const reservation_id = req.params.reservation_id;
   if(!req.body.data || !reservation_id){return next({status: 400, message: "missing reservation_id or data"});
-  }
+  };
   next();
-}
+};
 
 async function validRes(req, res, next){
   const {data: {reservation_id} = {}} = req.body;
@@ -86,17 +86,17 @@ async function validRes(req, res, next){
   
   res.locals.reservation = reservation;
   next();
-}
+};
 
 async function tableExists(req, res, next){
   const {table_id} = req.params;
   const table = await service.read(Number(table_id));
   if(!table){ 
     return next({ status: 404, message: `Table ${table_id} cannot be found.` });
-  }
+  };
   res.locals.table = table;
   next()
-}
+};
 
 function hasCap(req, res, next){
   const people = res.locals.reservation.people;
@@ -104,18 +104,18 @@ function hasCap(req, res, next){
 
   if(capacity < people ){
     return next({status:400, message: "not enough capacity"});
-  }
+  };
   next()
-}
+};
 
 function isOccupied(req, res, next){
   const table = res.locals.table
   
   if(table.occupied === true){
     return next({status:400, message: "table is occupied"})
-  }
+  };
   next();
-}
+};
 
 module.exports = {
     list: [
@@ -142,4 +142,4 @@ module.exports = {
       asyncErrorBoundary(tableExists),
       asyncErrorBoundary(unseat),
     ],
-}
+};

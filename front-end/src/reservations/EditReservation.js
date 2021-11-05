@@ -61,7 +61,15 @@ export default function EditReservation(){
     
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
     
-    return (
+    return (<>
+        <div className="container p-3 my-2 bg-dark text-white">
+            <div className="row m-5 justify-content-center">
+                <div className="col-4.5  p-3 bg-dark text-white">
+                    <h1 className="m-3">Edit a Reservation</h1>
+                </div>
+            </div>
+        </div>
+        <div className="container p-3 my-2">  
         <form>
             <ErrorAlert error={currentReservationError}/>
             {errors.messages.length? <div className="alert alert-danger" role="alert">
@@ -91,7 +99,8 @@ export default function EditReservation(){
                 <input type="number" min="1" pattern="\d+" className="form-control" name="people" id="people" placeholder='10' value={currentReservation?.people} onChange={handleChange}/>
             </div>
             <button onClick={() => history.goBack()} type="cancel" className="buttonSpace btn btn-outline-secondary">Cancel</button>
-            <button type="submit" onClick={handleSubmit} className="btn btn-outline-primary">Submit</button>
+            <button type="submit" onClick={handleSubmit} className="btn btn-outline-primary m-2">Submit</button>
         </form>
-    )
+        </div>
+   </> )
 }

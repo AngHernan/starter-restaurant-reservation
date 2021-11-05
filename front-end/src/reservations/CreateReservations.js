@@ -1,10 +1,12 @@
 import React, { useState} from "react";
+import ErrorAlert from "../layout/ErrorAlert";
 import {useHistory} from "react-router-dom";
 import {createReservation} from "../utils/api";
 import { validateReservation } from "../utils/validations";
 
 export default function CreateReservation(){
     const [newReservation, setNewReservation] = useState({});
+    const [reservationError, setReservationError] = useState(null)
     const [errors, setErrors] = useState({"messages":[]});
 
     const history = useHistory();
@@ -33,13 +35,14 @@ export default function CreateReservation(){
 
         await createReservation({data: reservation}, abortController.signal)
             .then(() => history.replace(`/dashboard?date=${reservation.reservation_date}`))
-            .catch(setErrors)
+            .catch(setReservationError)
 
         return () => 
             abortController.abort();
 
     }
-    
+    console.log(errors.messages)
+    console.log("****************")
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
     
     return ( <>
@@ -52,7 +55,8 @@ export default function CreateReservation(){
         </div>
             
         </div>
-    <div className="container p-3 my-2">    
+    <div className="container p-3 my-2">   
+    <ErrorAlert error={reservationError}/> 
     <form>
             {errors.messages.length ? <div className="alert alert-danger" role="alert">
                 {errorDisplay}</div> : <div></div>}
@@ -81,7 +85,7 @@ export default function CreateReservation(){
                 <input type="number" min="1" pattern="\d+" className="form-control" name="people" id="people" placeholder='10' value={newReservation?.people} onChange={handleChange} />
             </div>
             <button onClick={() => history.goBack()} type="cancel" className="buttonSpace btn btn-secondary">Cancel</button>
-            <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
+            <button type="submit" onClick={handleSubmit} className="btn btn-primary m-2">Submit</button>
         </form>
         </div>
         </>

@@ -9,13 +9,13 @@ const controller = require("./reservations.controller");
 
 router.route("/")
     .get(controller.list)
-    .post(controller.create)
+    .post(controller.create);
 
 router.route("/:reservation_id")
     .get(controller.read)
-    .put(controller.updateReservation)
+    .put(controller.updateReservation);
 
 router.route("/:reservation_id/status")
-    .put(controller.changeStatus)
+    .put(controller.changeStatus);
 
 module.exports = router;
