@@ -21,10 +21,9 @@ export function validateReservation(reservation, errors){
     if(!reservation_date)errors.messages.push("Missing date");
     if(!people) errors.messages.push("Missing paty size");
 
-    if(Date.parse(reservation_date) === NaN){
+    if(isNaN(Date.parse(reservation_date))){
         errors.messages.push('Date is not valid'); 
     };
-
     if(validUTC < current){
         errors.messages.push('Date must be in the future'); 
     };
@@ -42,11 +41,9 @@ export function validateReservation(reservation, errors){
     };
 
     return true;
-}
+};
 
 export function validateSeating(table, people, errors){
-
-    console.log("here:", table);
 
     if(table.occupied === true){
         errors.messages.push('Table is occupied');

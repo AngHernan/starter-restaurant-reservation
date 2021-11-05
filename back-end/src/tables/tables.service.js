@@ -2,7 +2,7 @@ const knex = require("../db/connection")
 
 function list(){
     return knex("tables").orderBy('table_name').select("*");
- };
+};
 
  function create(table){
     return knex("tables").insert(table,"*").then((updatedRecords) => updatedRecords[0]);
@@ -32,29 +32,29 @@ function seatRes(table_id, reservation_id) {
         .then((records) => records[0]);
     });
 };
-    function update(table_id, reservation_id){
-        return knex("tables")
-            .select("*")
-            .where({"table_id": table_id})
-            .update({ reservation_id: reservation_id, occupied: true })
-      };
+function update(table_id, reservation_id){
+    return knex("tables")
+        .select("*")
+        .where({"table_id": table_id})
+        .update({ reservation_id: reservation_id, occupied: true })
+};
 
-    function unseat(table_id, reservation_id){
-        return knex.transaction(async (transaction) => {
-              await knex("reservations")
-                .where({"reservation_id": reservation_id })
-                .update({ status: "finished" })
-                .transacting(transaction);
-              return knex("tables")
-                .where({ "table_id": table_id })
-                .update({
-                    "occupied": false,
-                    "reservation_id": null
-                })
-                .transacting(transaction)
-                .then((records) => records[0]);
-            });
-        };
+function unseat(table_id, reservation_id){
+    return knex.transaction(async (transaction) => {
+            await knex("reservations")
+            .where({"reservation_id": reservation_id })
+            .update({ status: "finished" })
+            .transacting(transaction);
+            return knex("tables")
+            .where({ "table_id": table_id })
+            .update({
+                "occupied": false,
+                "reservation_id": null
+            })
+            .transacting(transaction)
+            .then((records) => records[0]);
+        });
+    };
         
 module.exports = {
     list,

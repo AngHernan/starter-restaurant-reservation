@@ -49,8 +49,8 @@ async function fetchJson(url, options, onCancel) {
       throw error;
     }
     return Promise.resolve(onCancel);
-  }
-}
+  };
+};
 
 /**
  * Retrieves all existing reservation.
@@ -67,7 +67,6 @@ export async function listReservations(params, signal) {
   const fetched = await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
-
   return fetched;
 };
 
@@ -91,10 +90,7 @@ export async function updateReservationStatus(reservation_id, status, signal) {
     body: JSON.stringify(status),
     signal,
   };
-  console.log(url, options)
-  const response = await fetchJson(url, options, {});
-  console.log("This was the response: ", response)
-  return response;
+  return await fetchJson(url, options, {});
 };
 
 export async function updateReservationInfo(reservation_id, body, signal){
@@ -115,7 +111,6 @@ export async function finishTable(table_id, signal) {
     headers,
     signal,
   };
-  console.log(url, options)
   return await fetchJson(url, options);
 };
 
@@ -138,7 +133,6 @@ export async function createReservation(reservation, signal) {
     body: JSON.stringify(reservation),
     signal,
   };
-  console.log(url, options);
   return await fetchJson(url, options, {});
 };
 

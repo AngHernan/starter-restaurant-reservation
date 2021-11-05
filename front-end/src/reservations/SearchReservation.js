@@ -4,7 +4,6 @@ import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservationsView from "../dashboard/DashboardReservationsView";
 
 export default function SearchReservation(){
-
     const [foundReservations, setFoundReservations] = useState([]);
     const [foundReservationError, setFoundReservationError] = useState(null);
 
@@ -61,6 +60,5 @@ export default function SearchReservation(){
             </h6>
             {notFound? NotFound : null}
         </div>
-        </>
-        )
+        </>);
 };

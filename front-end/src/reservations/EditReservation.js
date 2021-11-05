@@ -102,5 +102,5 @@ export default function EditReservation(){
             <button type="submit" onClick={handleSubmit} className="btn btn-outline-primary m-2">Submit</button>
         </form>
         </div>
-   </> )
+   </> );
 };

@@ -19,7 +19,7 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
             .then(loadTables)
             .catch(setFinishTableError);
           return () => abortController.abort();
-        }
+        };
       };
 
 
@@ -67,7 +67,5 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
                 </tbody>
                 </table>
             </div>
-        </>
-            
-        )
-    }
+        </>);
+};

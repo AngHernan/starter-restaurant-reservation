@@ -5,13 +5,7 @@
 
  const service = require("./reservations.service");
  const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
- 
-{/*to be deleted*/}
 
-function loginfo(req, res, next){
-  console.log(req.body.data);
-  return next();
-}
 
 {/*
   //########################################C.R.U.D.########################################//
@@ -166,9 +160,9 @@ function notPast(req, res, next){
   const time = res.locals.reservation_time;
 
   
-  const current = new Date().toUTCString();
-
-  const valid = new Date(`${date} ${time}`).toUTCString();
+  const current = new Date();
+  const dateString = new Date(`${date} ${time}`).toUTCString();
+  const valid = new Date(dateString);
 
   if(current < valid){
     return next();
@@ -225,7 +219,6 @@ module.exports = {
     asyncErrorBoundary(list)
   ],
   create: [
-    loginfo,
     checkStatus,
     hasFirstName, 
     hasLastName, 

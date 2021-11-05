@@ -8,15 +8,12 @@ export default function CreateReservation(){
     const [newReservation, setNewReservation] = useState({});
     const [reservationError, setReservationError] = useState(null)
     const [errors, setErrors] = useState({"messages":[]});
-
     const history = useHistory();
-
 
     const handleChange = (event) => {
         setErrors({"messages": [] });
         const { name, value } = event.target;
         setNewReservation({...newReservation, [name]: value});
-        
     };
 
     const handleSubmit = async (event) => {
@@ -37,23 +34,18 @@ export default function CreateReservation(){
             .then(() => history.replace(`/dashboard?date=${reservation.reservation_date}`))
             .catch(setReservationError)
 
-        return () => 
-            abortController.abort();
-
+        return () => abortController.abort();
     };
-    console.log(errors.messages)
-    console.log("****************")
+
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
     
     return ( <>
          <div className="container p-3 my-2 bg-dark text-white">
             <div className="row m-5 justify-content-center">
-            <div className="col-4.5  p-3 bg-dark text-white">
-                <h1 className="m-3">Create a Reservation</h1>
-            </div>
-           
-        </div>
-            
+                <div className="col-4.5  p-3 bg-dark text-white">
+                    <h1 className="m-3">Create a Reservation</h1>
+                </div>
+            </div>   
         </div>
     <div className="container p-3 my-2">   
     <ErrorAlert error={reservationError}/> 
@@ -88,6 +80,5 @@ export default function CreateReservation(){
             <button type="submit" onClick={handleSubmit} className="btn btn-primary m-2">Submit</button>
         </form>
         </div>
-        </>
-    )
+        </>);
 };

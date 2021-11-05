@@ -9,8 +9,6 @@ export default function SeatReservation(){
     const history = useHistory();
     const {reservation_id} = useParams();
     const [selectedTableID, setSelectedTableID] = useState(null);
-
-
     const [tables, setTables] = useState([]);
     const [tablesError, setTablesError] = useState("");
     
@@ -125,6 +123,5 @@ export default function SeatReservation(){
         </div>
         <ErrorAlert error={tablesError} />
         <ErrorAlert error={currentReservationError} />
-    </>
-        )
+    </>);
 };

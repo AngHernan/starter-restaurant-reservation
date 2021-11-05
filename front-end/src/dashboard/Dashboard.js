@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { listReservations, listTables} from "../utils/api";
 import {previous, today, next} from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
-import DashboardReservationsView from "./DashboardReservationsView"
-import DashboardTablesView from "./DashboardTablesView"
+import DashboardReservationsView from "./DashboardReservationsView";
+import DashboardTablesView from "./DashboardTablesView";
 import { Link, useLocation} from "react-router-dom";
-import queryString from "query-string"
+import queryString from "query-string";
 
 
 /**
@@ -15,12 +15,8 @@ import queryString from "query-string"
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
-
-
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-
- 
 
   const [dateOfReservations, setDateOfReservations] = useState(date);
 
@@ -33,9 +29,6 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [search, dateOfReservations, date, searchDate]);
   useEffect(resetDate, [search, date]);
   
-
-  
-
   function loadTables() {
       const abortController = new AbortController();
       setTablesError(null);
@@ -44,7 +37,7 @@ function Dashboard({ date }) {
         .catch(setTablesError)
           
       return () => abortController.abort();
-    }
+  };
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -58,29 +51,27 @@ function Dashboard({ date }) {
     listReservations({date}, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError)
-      }
+      };
       return () => abortController.abort();
-  }
+  };
 
   function resetDate() {
     if(search) return
     const abortController = new AbortController();
     setDateOfReservations(date)
     return () => abortController.abort();
-  }
+  };
 
 
 
-  return (
-
-    <main>
+  return (<>
       <div className="container p-3 my-2 bg-secondary text-white">
         <div className="row justify-content-center">
           <div className="col-5.5 border border-primary p-3 mb-2 bg-dark text-white">
             <h1 className="m-3 pl-3">Reservations Dashboard</h1>
           </div>
         </div>
-       
+
         <div className="row justify-content-center">
           <div className="col-1.5">
           <button id="today" type="today" className="btn btn-outline-primary btn m-2"><Link to={`/dashboard?date=${previous(dateOfReservations)}`}>Previous</Link></button>
@@ -106,12 +97,10 @@ function Dashboard({ date }) {
       <ErrorAlert error={tablesError} />
       <ErrorAlert error={reservationsError} />
       <div className="container p-3 my-2">    
-
       <DashboardReservationsView reservations={reservations} loadDashboard={loadDashboard}/>
      <DashboardTablesView tables={tables} loadDashboard={loadDashboard} loadTables={loadTables}/>
     </div>
-    </main>
-  );
-}
+  </>);
+};
 
 export default Dashboard;
