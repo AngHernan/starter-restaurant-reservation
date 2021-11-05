@@ -24,14 +24,14 @@ export default function EditReservation(){
             .then(setCurrentReservation)
             .catch(setCurrentReservationError)
         return () => abortController.abort();
-        }
+        };
 
 
     const handleChange = (event) => {
         setErrors({"messages": [] });
         const { name, value } = event.target;
         setCurrentReservation({...currentReservation, [name]: value});
-    }
+    };
 
     const handleSubmit = async (event) => {
         const abortController = new AbortController();
@@ -41,13 +41,13 @@ export default function EditReservation(){
         if(!validated){
             setErrors({...errors})
             return errors.messages;
-        }
+        };
 
         const reservation = {
                     ...currentReservation,
                     reservation_time: formatAsTime(currentReservation.reservation_time),
                     people: Number(currentReservation.people),
-        }
+        };
 
         await updateReservationInfo(currentReservation.reservation_id, {data: reservation}, abortController.signal)
         .then(() => {history.push({
@@ -56,8 +56,8 @@ export default function EditReservation(){
         })})
         return () => {
             abortController.abort();
-        }
-    }
+        };
+    };
     
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
     
@@ -103,4 +103,4 @@ export default function EditReservation(){
         </form>
         </div>
    </> )
-}
+};

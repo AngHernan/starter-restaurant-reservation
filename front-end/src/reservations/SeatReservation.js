@@ -30,7 +30,7 @@ export default function SeatReservation(){
               })
                 .catch(setTablesError)
             return () => abortController.abort();
-            }
+    };
 
     function loadReservation(){
         const abortController = new AbortController();
@@ -39,11 +39,11 @@ export default function SeatReservation(){
             .then(setCurrentReservation)
             .catch(setCurrentReservationError)
         return () => abortController.abort();
-        }
+    };
 
     function handleChange({ target }) {
             setSelectedTableID(target.value);
-          }
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -54,7 +54,7 @@ export default function SeatReservation(){
         if(currentReservation.people > foundTable.capacity) {//TO PASS TEST CODE, ORIGINALLY WAS A WINDOW ALERT 
             setTablesError({message: "Party size is greater then table capacity, choose another table."})
             return
-        }
+        };
         updateTableStatus(selectedTableID, { data: { reservation_id } }, 'PUT', abortController.signal)
             .then(() => {history.push({
                 pathname: "/dashboard",
@@ -62,13 +62,12 @@ export default function SeatReservation(){
              })
             .catch(setTablesError)
         return () => abortController.abort();
-        }
+    };
 
     const tableOptions = tables.map((table) => (
         <option key={Number(table.table_id)} value={Number(table.table_id)}>
           {table.table_name} - {table.capacity}
-        </option>)
-    )
+        </option>));
 
     return (
     <> 
@@ -128,4 +127,4 @@ export default function SeatReservation(){
         <ErrorAlert error={currentReservationError} />
     </>
         )
-}
+};

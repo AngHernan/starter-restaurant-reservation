@@ -17,7 +17,7 @@ export default function CreateReservation(){
         const { name, value } = event.target;
         setNewReservation({...newReservation, [name]: value});
         
-    }
+    };
 
     const handleSubmit = async (event) => {
         const abortController = new AbortController();
@@ -27,11 +27,11 @@ export default function CreateReservation(){
         if(!validated){
             setErrors({...errors})
             return errors.messages;
-        }
+        };
         const reservation = {
             ...newReservation,
             people: Number(newReservation.people),
-        }
+        };
 
         await createReservation({data: reservation}, abortController.signal)
             .then(() => history.replace(`/dashboard?date=${reservation.reservation_date}`))
@@ -40,7 +40,7 @@ export default function CreateReservation(){
         return () => 
             abortController.abort();
 
-    }
+    };
     console.log(errors.messages)
     console.log("****************")
     const errorDisplay = `Resolve these issues: ${errors.messages.join(',\n ')} !`;
@@ -90,4 +90,4 @@ export default function CreateReservation(){
         </div>
         </>
     )
-}
+};

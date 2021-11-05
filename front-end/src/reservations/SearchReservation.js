@@ -12,7 +12,7 @@ export default function SearchReservation(){
 
     function handleChange({ target }) {
         setNotFound(false)
-      }
+      };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -29,9 +29,9 @@ export default function SearchReservation(){
             .catch(setFoundReservationError)
 
         return () => abortController.abort();
-    }
+    };
 
-    const NotFound = (<b>No reservations found</b>)
+    const NotFound = (<b>No reservations found</b>);
     
     return (
         <>
@@ -63,4 +63,4 @@ export default function SearchReservation(){
         </div>
         </>
         )
-}
+};
