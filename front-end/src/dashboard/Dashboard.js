@@ -4,7 +4,7 @@ import {previous, today, next} from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservationsView from "./DashboardReservationsView";
 import DashboardTablesView from "./DashboardTablesView";
-import { Link, useLocation} from "react-router-dom";
+import { Link, useLocation, useHistory,} from "react-router-dom";
 import queryString from "query-string";
 
 
@@ -21,7 +21,9 @@ function Dashboard({ date }) {
   const [dateOfReservations, setDateOfReservations] = useState(date);
 
   const {search} = useLocation();
+  const history = useHistory();
   const searchDate = queryString.parse(search).date;
+
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
@@ -38,7 +40,14 @@ function Dashboard({ date }) {
           
       return () => abortController.abort();
   };
-
+  const handleChange = (event) => {
+    const { value } = event.target;
+    console.log(value);
+    history.push({
+      pathname: "/dashboard",
+      search:`?date=${value}`
+})
+};
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
@@ -90,7 +99,7 @@ function Dashboard({ date }) {
           </div>
         <div className="row justify-content-center">
           <div className="col-3">
-            <input type="date" className="form-control" name="reservation_date" id="reservation_date" placeholder="Date of Reservation"/>
+            <input type="date" className="form-control" name="reservation_date" id="reservation_date" placeholder="Date of Reservation" onChange={handleChange}/>
           </div>
         </div>
       </div>

@@ -33,7 +33,7 @@ export default function DashboardReservationsView({reservations, loadDashboard})
                 <td>{reservation.reservation_time}</td>
                 <td>{reservation.people}</td>
                 <td><p data-reservation-id-status={reservation.reservation_id}>{reservation.status}</p></td>
-                <td>{reservation.status !== "booked"? null : (
+                <td><div style={{display:'flex'}}>{reservation.status !== "booked"? null : (
                 <>
                   <a
                     href={`/reservations/${reservation.reservation_id}/seat`}
@@ -55,7 +55,9 @@ export default function DashboardReservationsView({reservations, loadDashboard})
                   >
                     Cancel
                   </button>
-                  </>)}</td>
+                  
+                  </>
+                  )}</div></td>
                   
             </tr>)
 })
@@ -63,7 +65,8 @@ export default function DashboardReservationsView({reservations, loadDashboard})
 
         return (<>
         <ErrorAlert error={cancelReservationError} />
-            <table className="table caption-top">
+      
+            <table className="table table-responsive caption-top">
   <caption>Reservations</caption>
   <thead>
     <tr>

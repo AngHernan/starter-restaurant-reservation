@@ -50,7 +50,7 @@ export default function DashboardTablesView({tables, loadDashboard, loadTables})
          
             <ErrorAlert error={finishTableError} />
                 <div>
-                <table className="table align-middle">
+                <table className="table align-middle table-responsive">
                 <caption>Tables</caption>
                 <thead>
                     <tr>
